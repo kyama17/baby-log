@@ -1,60 +1,60 @@
-# Next.js Framework Starter
+# ベビーログアプリ
 
 [![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/cloudflare/templates/tree/main/next-starter-template)
 
-<!-- dash-content-start -->
+このアプリケーションは、赤ちゃんのトイレ活動（排尿と排便）を追跡するためのNext.jsアプリケーションです。Cloudflare Workers上で静的サイトとしてデプロイされています。
 
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app). It's deployed on Cloudflare Workers as a [static website](https://developers.cloudflare.com/workers/static-assets/).
+## 特徴
 
-<!-- dash-content-end -->
-
-Outside of this repo, you can start a new project with this template using [C3](https://developers.cloudflare.com/pages/get-started/c3/) (the `create-cloudflare` CLI):
-
-```bash
-npm create cloudflare@latest -- --template=cloudflare/templates/next-starter-template
-```
-
-A live public deployment of this template is available at [https://next-starter-template.templates.workers.dev](https://next-starter-template.templates.workers.dev)
+- 赤ちゃんの排尿と排便を記録
+- 記録されたログを表示
+- 日本語対応のユーザーインターフェース
 
 ## Getting Started
 
-First, run:
+まず、以下のコマンドを実行して必要なパッケージをインストールします：
 
 ```bash
 npm install
-# or
+# または
 yarn install
-# or
+# または
 pnpm install
-# or
+# または
 bun install
 ```
 
-Then run the development server (using the package manager of your choice):
+次に、開発サーバーを起動します：
 
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+ブラウザで [http://localhost:3000](http://localhost:3000) にアクセスすると、アプリケーションが表示されます。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+`app/page.tsx` ファイルを編集すると、ページが自動的に更新されます。
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## デプロイ
 
-## Deploying To Production
+プロダクションにデプロイするには、以下のコマンドを実行します：
 
-| Command                           | Action                                       |
-| :-------------------------------- | :------------------------------------------- |
-| `npm run build`                   | Build your production site                   |
-| `npm run preview`                 | Preview your build locally, before deploying |
-| `npm run build && npm run deploy` | Deploy your production site to Cloudflare    |
+| コマンド                           | アクション                                       |
+| :--------------------------------- | :----------------------------------------------- |
+| `npm run build`                   | プロダクションサイトをビルド                   |
+| `npm run preview`                 | ローカルでビルドをプレビュー                   |
+| `npm run build && npm run deploy` | プロダクションサイトをCloudflareにデプロイ |
 
-## Learn More
+## ファイル構成
 
-To learn more about Next.js, take a look at the following resources:
+- `src/app/page.tsx`: メインのベビーログページ
+- `src/app/api/baby-log/route.ts`: ベビーログのAPIエンドポイント
+- `src/app/layout.tsx`: アプリケーションのレイアウト
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 学ぶためのリソース
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- [Next.js ドキュメント](https://nextjs.org/docs) - Next.jsの機能とAPIについて学ぶ
+- [Learn Next.js](https://nextjs.org/learn) - インタラクティブなNext.jsチュートリアル
+
+## ライセンス
+
+このプロジェクトはMITライセンスの下で提供されています。
