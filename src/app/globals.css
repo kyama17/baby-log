@@ -30,4 +30,10 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+@media (prefers-color-scheme: dark) {
+  select {
+    background-color: rgb(var(--background-start-rgb));
+    color: rgb(var(--foreground-rgb));
+  }
+}
 }
