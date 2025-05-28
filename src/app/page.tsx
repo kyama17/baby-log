@@ -33,7 +33,7 @@ export default function BabyLogPage() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Baby Bathroom Log</h1>
+      <h1 className="text-2xl font-bold mb-4">赤ちゃんのトイレログ</h1>
       <form onSubmit={handleSubmit} className="mb-4">
         <div className="flex space-x-2">
           <select
@@ -41,20 +41,20 @@ export default function BabyLogPage() {
             onChange={(e) => setType(e.target.value as 'urination' | 'defecation')}
             className="border p-2 rounded"
           >
-            <option value="urination">Urination</option>
-            <option value="defecation">Defecation</option>
+            <option value="urination">排尿</option>
+            <option value="defecation">排便</option>
           </select>
           <button type="submit" className="bg-blue-500 text-white p-2 rounded">
-            Record
+            記録
           </button>
         </div>
       </form>
       <div>
-        <h2 className="text-xl font-bold mb-2">Log Entries</h2>
+        <h2 className="text-xl font-bold mb-2">ログエントリ</h2>
         <ul>
           {logEntries.map((entry) => (
             <li key={entry.id} className="mb-1">
-              {entry.type.charAt(0).toUpperCase() + entry.type.slice(1)} at {new Date(entry.timestamp).toLocaleString()}
+              {entry.type === 'urination' ? '排尿' : '排便'} at {new Date(entry.timestamp).toLocaleString('ja-JP')}
             </li>
           ))}
         </ul>
