@@ -2,11 +2,11 @@
 
 [![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/cloudflare/templates/tree/main/next-starter-template)
 
-このアプリケーションは、赤ちゃんのトイレ活動（排尿と排便）を追跡するためのNext.jsアプリケーションです。Cloudflare Workers上で静的サイトとしてデプロイされています。
+このアプリケーションは、赤ちゃんのトイレ活動（おしっことうんち）を追跡するためのNext.jsアプリケーションです。Cloudflare Workers上で静的サイトとしてデプロイされています。
 
 ## 特徴
 
-- 赤ちゃんの排尿と排便を記録
+- 赤ちゃんのおしっことうんちを記録
 - 記録されたログを表示
 - 日本語対応のユーザーインターフェース
 

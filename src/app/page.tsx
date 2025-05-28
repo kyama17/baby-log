@@ -41,8 +41,8 @@ export default function BabyLogPage() {
             onChange={(e) => setType(e.target.value as 'urination' | 'defecation')}
             className="border p-2 rounded"
           >
-            <option value="urination">排尿</option>
-            <option value="defecation">排便</option>
+            <option value="urination">おしっこ</option>
+            <option value="defecation">うんち</option>
           </select>
           <button type="submit" className="bg-blue-500 text-white p-2 rounded">
             記録
@@ -54,7 +54,7 @@ export default function BabyLogPage() {
         <ul>
           {logEntries.map((entry) => (
             <li key={entry.id} className="mb-1">
-              {entry.type === 'urination' ? '排尿' : '排便'} at {new Date(entry.timestamp).toLocaleString('ja-JP')}
+              {entry.type === 'urination' ? 'おしっこ' : 'うんち'} at {new Date(entry.timestamp).toLocaleString('ja-JP')}
             </li>
           ))}
         </ul>
