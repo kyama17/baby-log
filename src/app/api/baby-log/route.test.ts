@@ -2,12 +2,14 @@
 
 // Declare the mock functions that will form the chain
 const mockMatch = jest.fn();
+const mockOrder = jest.fn(); // Mock for the order method
+const mockSelectChain = jest.fn(() => ({ order: mockOrder })); // Mock for the select method that returns order
 const mockDeleteChain = jest.fn(() => ({ match: mockMatch }));
-const mockSelect = jest.fn();
-const mockInsert = jest.fn(() => ({ select: mockSelect }));
+const mockInsertChain = jest.fn(() => ({ select: mockSelectChain })); // insert().select() part
 const mockFromChain = jest.fn(() => ({ 
   delete: mockDeleteChain,
-  insert: mockInsert
+  insert: mockInsertChain,
+  select: mockSelectChain // from().select() part
 }));
 
 // This is the function that will be assigned to the mocked createClient
@@ -20,8 +22,8 @@ jest.mock('@supabase/supabase-js', () => ({
   createClient: jest.fn().mockImplementation(() => supabaseClientMockImplementation()),
 }));
 
-// Import the DELETE and POST functions to test AFTER mocks are set up.
-import { DELETE, POST } from './route';
+// Import the DELETE, POST, and GET functions to test AFTER mocks are set up.
+import { DELETE, POST, GET } from './route';
 import { NextResponse } from 'next/server';
 
 describe('DELETE /api/baby-log', () => {
@@ -34,8 +36,10 @@ describe('DELETE /api/baby-log', () => {
     mockFromChain.mockClear();
     mockDeleteChain.mockClear();
     mockMatch.mockClear();
-    mockInsert.mockClear();
-    mockSelect.mockClear();
+    mockInsertChain.mockClear();
+    // mockSelect is now mockSelectChain to avoid confusion if we have a standalone select mock
+    mockSelectChain.mockClear(); 
+    mockOrder.mockClear(); // Clear order mock
   });
 
   test('Test Case 1: Successful Deletion', async () => {
@@ -55,7 +59,7 @@ describe('DELETE /api/baby-log', () => {
     expect(response.status).toBe(200);
     expect(responseBody).toEqual({ message: 'Log entry deleted successfully' });
     expect(mockFromChain).toHaveBeenCalledWith('baby_log');
-    expect(mockDeleteChain).toHaveBeenCalledTimes(1);
+    expect(mockDeleteChain).toHaveBeenCalledTimes(1); // This is correct for delete
     expect(mockMatch).toHaveBeenCalledWith({ id: 123 });
   });
 
@@ -72,8 +76,8 @@ describe('DELETE /api/baby-log', () => {
 
     expect(response.status).toBe(400);
     expect(responseBody).toEqual({ error: 'Missing id in request body' });
-    expect(mockMatch).not.toHaveBeenCalled(); // Match should not be called if ID is missing
-    expect(mockDeleteChain).not.toHaveBeenCalled(); // Delete should not be called
+    expect(mockMatch).not.toHaveBeenCalled(); 
+    expect(mockDeleteChain).not.toHaveBeenCalled(); 
   });
 
   test('Test Case 3: Supabase Error', async () => {
@@ -97,7 +101,7 @@ describe('DELETE /api/baby-log', () => {
     expect(response.status).toBe(500);
     expect(responseBody).toEqual({ error: 'Failed to delete log entry' });
     expect(mockFromChain).toHaveBeenCalledWith('baby_log');
-    expect(mockDeleteChain).toHaveBeenCalledTimes(1);
+    expect(mockDeleteChain).toHaveBeenCalledTimes(1); // Correct for delete
     expect(mockMatch).toHaveBeenCalledWith({ id: 456 });
     expect(consoleErrorSpy).toHaveBeenCalledWith('Error deleting baby log entry:', supabaseError);
 
@@ -109,13 +113,15 @@ describe('DELETE /api/baby-log', () => {
 describe('POST /api/baby-log', () => {
   beforeEach(() => {
     mockFromChain.mockClear();
-    mockInsert.mockClear();
-    mockSelect.mockClear();
+    mockInsertChain.mockClear();
+    mockSelectChain.mockClear(); // Was mockSelect
+    mockOrder.mockClear(); // Added for consistency, though not directly used by POST's select
   });
 
   test('Test Case 1: POST with custom timestamp', async () => {
     const mockEntry = { id: 1, type: 'urination', timestamp: '2023-12-25T10:30:00.000Z' };
-    mockSelect.mockResolvedValueOnce({ data: [mockEntry], error: null });
+    // POST uses insert().select(), so mockSelectChain will be called by mockInsertChain
+    mockSelectChain.mockResolvedValueOnce({ data: [mockEntry], error: null }); 
 
     const customTimestamp = '2023-12-25T10:30:00.000Z';
     const requestBody = { type: 'urination', timestamp: customTimestamp };
@@ -131,16 +137,17 @@ describe('POST /api/baby-log', () => {
     expect(response.status).toBe(201);
     expect(responseBody).toEqual(mockEntry);
     expect(mockFromChain).toHaveBeenCalledWith('baby_log');
-    expect(mockInsert).toHaveBeenCalledWith([{
+    expect(mockInsertChain).toHaveBeenCalledWith([{ // Was mockInsert
       type: 'urination',
       timestamp: customTimestamp
     }]);
-    expect(mockSelect).toHaveBeenCalledTimes(1);
+    expect(mockSelectChain).toHaveBeenCalledTimes(1); // Was mockSelect
   });
 
   test('Test Case 2: POST without timestamp (uses current time)', async () => {
     const mockEntry = { id: 2, type: 'defecation', timestamp: expect.any(String) };
-    mockSelect.mockResolvedValueOnce({ data: [mockEntry], error: null });
+    // POST uses insert().select(), so mockSelectChain will be called by mockInsertChain
+    mockSelectChain.mockResolvedValueOnce({ data: [mockEntry], error: null }); 
 
     const requestBody = { type: 'defecation' };
     const request = new Request('http://localhost/api/baby-log', {
@@ -154,10 +161,113 @@ describe('POST /api/baby-log', () => {
 
     expect(response.status).toBe(201);
     expect(mockFromChain).toHaveBeenCalledWith('baby_log');
-    expect(mockInsert).toHaveBeenCalledWith([{
+    expect(mockInsertChain).toHaveBeenCalledWith([{ // Was mockInsert
       type: 'defecation',
       timestamp: expect.any(String)
     }]);
-    expect(mockSelect).toHaveBeenCalledTimes(1);
+    expect(mockSelectChain).toHaveBeenCalledTimes(1); // Was mockSelect
+  });
+
+  test('Test Case 3: Supabase Error on Insert', async () => {
+    const supabaseError = { message: 'Supabase insert error', details: 'DB constraint', hint: 'Check data', code: '23505' };
+    // POST uses insert().select(), so mockSelectChain (which is the .select() part) 
+    // needs to be mocked to return the error.
+    mockSelectChain.mockResolvedValueOnce({ data: null, error: supabaseError });
+
+    const requestBody = { type: 'urination', timestamp: '2023-01-01T12:00:00.000Z' };
+    const request = new Request('http://localhost/api/baby-log', {
+      method: 'POST',
+      body: JSON.stringify(requestBody),
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    // Spy on console.error
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+    const response = await POST(request);
+    const responseBody = await response.json();
+
+    expect(response.status).toBe(500);
+    expect(responseBody).toEqual({ error: supabaseError.message }); // The route returns error.message
+    expect(mockFromChain).toHaveBeenCalledWith('baby_log');
+    expect(mockInsertChain).toHaveBeenCalledWith([{ // Check that insert was called with correct data
+      type: requestBody.type,
+      timestamp: requestBody.timestamp,
+    }]);
+    expect(mockSelectChain).toHaveBeenCalledTimes(1); // Ensure the select part of insert().select() was called
+    expect(consoleErrorSpy).toHaveBeenCalledWith('Error inserting baby log entry:', supabaseError);
+
+    // Restore console.error
+    consoleErrorSpy.mockRestore();
+  });
+});
+
+// New tests for GET endpoint
+describe('GET /api/baby-log', () => {
+  beforeEach(() => {
+    mockFromChain.mockClear();
+    mockSelectChain.mockClear(); // from().select()
+    mockOrder.mockClear(); // from().select().order()
+     // Clear createClient mock if you need to check calls to it
+    // import { createClient } from '@supabase/supabase-js';
+    // (createClient as jest.Mock).mockClear();
+  });
+
+  test('Test Case 1: Successful retrieval of multiple entries', async () => {
+    const sampleLogs = [
+      { id: 1, type: 'urination', timestamp: '2023-01-01T10:00:00.000Z' },
+      { id: 2, type: 'defecation', timestamp: '2023-01-01T09:00:00.000Z' },
+    ];
+    // Mock the chain: from -> select -> order
+    mockOrder.mockResolvedValueOnce({ data: sampleLogs, error: null });
+
+    const request = new Request('http://localhost/api/baby-log', { method: 'GET' });
+    const response = await GET(request);
+    const responseBody = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(responseBody).toEqual(sampleLogs);
+    expect(mockFromChain).toHaveBeenCalledWith('baby_log');
+    expect(mockSelectChain).toHaveBeenCalledWith('*');
+    expect(mockOrder).toHaveBeenCalledWith('timestamp', { ascending: false });
+  });
+
+  test('Test Case 2: Successful retrieval of zero entries', async () => {
+    // Mock the chain to return empty data
+    mockOrder.mockResolvedValueOnce({ data: [], error: null });
+
+    const request = new Request('http://localhost/api/baby-log', { method: 'GET' });
+    const response = await GET(request);
+    const responseBody = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(responseBody).toEqual([]);
+    expect(mockFromChain).toHaveBeenCalledWith('baby_log');
+    expect(mockSelectChain).toHaveBeenCalledWith('*');
+    expect(mockOrder).toHaveBeenCalledWith('timestamp', { ascending: false });
+  });
+
+  test('Test Case 3: Supabase error during fetch', async () => {
+    const supabaseError = { message: 'Supabase fetch error', details: 'Some details', hint: '', code: '50001' };
+    // Mock the chain to return an error
+    mockOrder.mockResolvedValueOnce({ data: null, error: supabaseError });
+
+    const request = new Request('http://localhost/api/baby-log', { method: 'GET' });
+    
+    // Spy on console.error
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+    const response = await GET(request);
+    const responseBody = await response.json();
+
+    expect(response.status).toBe(500);
+    expect(responseBody).toEqual({ error: supabaseError.message });
+    expect(mockFromChain).toHaveBeenCalledWith('baby_log');
+    expect(mockSelectChain).toHaveBeenCalledWith('*');
+    expect(mockOrder).toHaveBeenCalledWith('timestamp', { ascending: false });
+    expect(consoleErrorSpy).toHaveBeenCalledWith('Error fetching baby log:', supabaseError);
+
+    // Restore console.error
+    consoleErrorSpy.mockRestore();
   });
 });
