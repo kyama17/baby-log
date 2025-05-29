@@ -48,3 +48,24 @@ export async function POST(request: Request) {
 
   return NextResponse.json(data[0], { status: 201 });
 }
+
+export async function DELETE(request: Request) {
+  const body = await request.json();
+  const { id } = body;
+
+  if (!id) {
+    return NextResponse.json({ error: "Missing id in request body" }, { status: 400 });
+  }
+
+  const { error } = await supabase
+    .from('baby_log')
+    .delete()
+    .match({ id });
+
+  if (error) {
+    console.error('Error deleting baby log entry:', error);
+    return NextResponse.json({ error: "Failed to delete log entry" }, { status: 500 });
+  }
+
+  return NextResponse.json({ message: "Log entry deleted successfully" }, { status: 200 });
+}

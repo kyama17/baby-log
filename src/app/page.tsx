@@ -31,6 +31,27 @@ export default function BabyLogPage() {
     setLogEntries((prev) => [...prev, newEntry] as BabyLogEntry[]);
   };
 
+  const handleDelete = async (id: number) => {
+    try {
+      const response = await fetch('/api/baby-log', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id }),
+      });
+
+      if (response.ok) {
+        setLogEntries((prev) => prev.filter((entry) => entry.id !== id));
+      } else {
+        const errorData = await response.json();
+        console.error('Failed to delete entry:', errorData);
+      }
+    } catch (error) {
+      console.error('Failed to delete entry:', error);
+    }
+  };
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">赤ちゃんのトイレログ</h1>
@@ -53,8 +74,16 @@ export default function BabyLogPage() {
         <h2 className="text-xl font-bold mb-2">ログエントリ</h2>
         <ul>
           {logEntries.map((entry) => (
-            <li key={entry.id} className="mb-1">
-              {entry.type === 'urination' ? 'おしっこ' : 'うんち'} at {new Date(entry.timestamp).toLocaleString('ja-JP')}
+            <li key={entry.id} className="mb-1 flex justify-between items-center">
+              <span>
+                {entry.type === 'urination' ? 'おしっこ' : 'うんち'} at {new Date(entry.timestamp).toLocaleString('ja-JP')}
+              </span>
+              <button
+                onClick={() => handleDelete(entry.id)}
+                className="bg-red-500 text-white p-1 rounded ml-2"
+              >
+                削除
+              </button>
             </li>
           ))}
         </ul>
