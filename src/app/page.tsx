@@ -20,35 +20,65 @@ export default function BabyLogPage() {
   });
 
   useEffect(() => {
-    fetch('/api/baby-log-mock')
-      .then((response) => response.json())
-      .then((data) => setLogEntries(data as BabyLogEntry[]));
+    fetch('/api/baby-log')
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setLogEntries(data as BabyLogEntry[]);
+        } else {
+          console.error('Received non-array data:', data);
+          setLogEntries([]);
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching baby log:', error);
+        setLogEntries([]);
+      });
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const response = await fetch('/api/baby-log-mock', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ 
-        type, 
-        timestamp: new Date(datetime).toISOString() 
-      }),
-    });
-    const newEntry = await response.json();
-    setLogEntries((prev) => [newEntry, ...prev] as BabyLogEntry[]);
-    
-    // 送信後、日時を現在時刻にリセット
-    const now = new Date();
-    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-    setDatetime(now.toISOString().slice(0, 16));
+    try {
+      const response = await fetch('/api/baby-log', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          type, 
+          timestamp: new Date(datetime).toISOString() 
+        }),
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const newEntry = await response.json();
+      if (newEntry && typeof newEntry === 'object') {
+        setLogEntries((prev) => [newEntry, ...prev] as BabyLogEntry[]);
+        
+        // 送信後、日時を現在時刻にリセット
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        setDatetime(now.toISOString().slice(0, 16));
+      } else {
+        throw new Error('Invalid response data');
+      }
+    } catch (error) {
+      console.error('Error submitting baby log:', error);
+      alert('データの保存に失敗しました。Supabaseの設定を確認してください。');
+    }
   };
 
   const handleDelete = async (id: number) => {
     try {
-      const response = await fetch('/api/baby-log-mock', {
+      const response = await fetch('/api/baby-log', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -61,9 +91,11 @@ export default function BabyLogPage() {
       } else {
         const errorData = await response.json();
         console.error('Failed to delete entry:', errorData);
+        alert('データの削除に失敗しました。Supabaseの設定を確認してください。');
       }
     } catch (error) {
       console.error('Failed to delete entry:', error);
+      alert('データの削除に失敗しました。Supabaseの設定を確認してください。');
     }
   };
 
