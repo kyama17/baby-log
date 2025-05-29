@@ -105,14 +105,14 @@ export default function BabyLogPage() {
         <h1 className="text-3xl font-bold">🍼 赤ちゃんのトイレログ</h1>
         <a
           href="/demo-data"
-          className="text-sm bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded transition-colors duration-200"
+          className="text-sm bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded transition-colors duration-200 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-300"
         >
           🧪 デモデータ
         </a>
       </div>
       
       {/* 記録フォーム */}
-      <div className="bg-white p-6 rounded-lg shadow-md mb-6">
+      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6">
         <h2 className="text-xl font-bold mb-4">📝 新しい記録</h2>
         <form onSubmit={handleSubmit}>
           <div className="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2">
@@ -125,7 +125,7 @@ export default function BabyLogPage() {
               <option value="defecation">💩 うんち</option>
             </select>
             <div className="flex flex-col">
-              <label htmlFor="datetime" className="text-sm text-gray-600 mb-1">
+              <label htmlFor="datetime" className="text-sm text-gray-600 dark:text-gray-400 mb-1">
                 日時
               </label>
               <input
@@ -133,7 +133,7 @@ export default function BabyLogPage() {
                 type="datetime-local"
                 value={datetime}
                 onChange={(e) => setDatetime(e.target.value)}
-                className="border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 required
               />
             </div>
@@ -153,14 +153,14 @@ export default function BabyLogPage() {
       </div>
 
       {/* ログエントリ一覧 */}
-      <div className="bg-white p-6 rounded-lg shadow-md">
+      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
         <h2 className="text-xl font-bold mb-4">📋 最近の記録</h2>
         {logEntries.length === 0 ? (
-          <p className="text-gray-500 text-center py-8">まだ記録がありません。上のフォームから記録を追加してください。</p>
+          <p className="text-gray-500 dark:text-gray-400 text-center py-8">まだ記録がありません。上のフォームから記録を追加してください。</p>
         ) : (
           <div className="space-y-2 max-h-96 overflow-y-auto">
             {logEntries.slice(0, 20).map((entry) => (
-              <div key={entry.id} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+              <div key={entry.id} className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                 <span className="flex items-center space-x-2">
                   <span className="text-lg">
                     {entry.type === 'urination' ? '💧' : '💩'}
@@ -168,7 +168,7 @@ export default function BabyLogPage() {
                   <span>
                     {entry.type === 'urination' ? 'おしっこ' : 'うんち'}
                   </span>
-                  <span className="text-gray-500">
+                  <span className="text-gray-500 dark:text-gray-400">
                     {new Date(entry.timestamp).toLocaleString('ja-JP')}
                   </span>
                 </span>
@@ -181,7 +181,7 @@ export default function BabyLogPage() {
               </div>
             ))}
             {logEntries.length > 20 && (
-              <p className="text-gray-500 text-center text-sm">
+              <p className="text-gray-500 dark:text-gray-400 text-center text-sm">
                 最新の20件を表示しています（全{logEntries.length}件）
               </p>
             )}
