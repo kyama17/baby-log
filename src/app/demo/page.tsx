@@ -56,8 +56,8 @@ export default function DemoPage() {
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">赤ちゃんのトイレログ（デモ版）</h1>
-      <div className="mb-4 p-4 bg-blue-100 rounded">
-        <p className="text-sm text-blue-800">
+      <div className="mb-4 p-4 bg-blue-100 rounded dark:bg-blue-800">
+        <p className="text-sm text-blue-800 dark:text-blue-300">
           このデモ版では、データはブラウザのローカルストレージに保存されます。
           日時を指定して記録できる機能をテストできます。
         </p>
@@ -74,7 +74,7 @@ export default function DemoPage() {
             <option value="defecation">うんち</option>
           </select>
           <div className="flex flex-col">
-            <label htmlFor="datetime" className="text-sm text-gray-600 mb-1">
+            <label htmlFor="datetime" className="text-sm text-gray-600 dark:text-gray-400 mb-1">
               日時
             </label>
             <input
@@ -82,7 +82,7 @@ export default function DemoPage() {
               type="datetime-local"
               value={datetime}
               onChange={(e) => setDatetime(e.target.value)}
-              className="border p-2 rounded"
+              className="border p-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:focus:ring-blue-500 dark:focus:border-blue-500"
               required
             />
           </div>
@@ -95,11 +95,11 @@ export default function DemoPage() {
       <div>
         <h2 className="text-xl font-bold mb-2">ログエントリ</h2>
         {logEntries.length === 0 ? (
-          <p className="text-gray-500">まだ記録がありません。</p>
+          <p className="text-gray-500 dark:text-gray-400">まだ記録がありません。</p>
         ) : (
           <ul>
             {logEntries.map((entry) => (
-              <li key={entry.id} className="mb-1 flex justify-between items-center p-2 bg-gray-50 rounded">
+              <li key={entry.id} className="mb-1 flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-700 rounded">
                 <span>
                   {entry.type === 'urination' ? 'おしっこ' : 'うんち'} at {new Date(entry.timestamp).toLocaleString('ja-JP')}
                 </span>

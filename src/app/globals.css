@@ -10,9 +10,9 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    --foreground-rgb: 243, 244, 246;
+    --background-start-rgb: 17, 24, 39;
+    --background-end-rgb: 17, 24, 39;
   }
 }
 
@@ -30,7 +30,27 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+  :root {
+    --recharts-text-color: #6b7280; /* gray-500 */
+    --recharts-grid-color: rgba(209, 213, 219, 0.5); /* gray-300 with 50% opacity */
+    --tooltip-bg-color: #ffffff; /* white */
+    --tooltip-text-color: #374151; /* gray-700 */
+    --tooltip-cursor-color: rgba(0, 0, 0, 0.1); /* black with 10% opacity */
+    --chart-color-urination: #3B82F6; /* Tailwind blue-500 */
+    --chart-color-defecation: #F59E0B; /* Tailwind amber-500 */
+  }
 @media (prefers-color-scheme: dark) {
+  :root {
+    /* --recharts-text-color is already set by --foreground-rgb which is now off-white */
+    /* We can explicitly define it if we want a different color for charts text */
+    --recharts-text-color: #d1d5db; /* gray-300, for better contrast on dark gray */
+    --recharts-grid-color: rgba(75, 85, 99, 0.3); /* gray-600 with 30% opacity */
+    --tooltip-bg-color: #374151; /* gray-700 */
+    --tooltip-text-color: #f3f4f6; /* gray-100 */
+    --tooltip-cursor-color: rgba(255, 255, 255, 0.1); /* white with 10% opacity */
+    --chart-color-urination: #60A5FA; /* Tailwind blue-400, for better contrast */
+    --chart-color-defecation: #FBBF24; /* Tailwind amber-400, slightly lighter */
+  }
   select {
     background-color: rgb(var(--background-start-rgb));
     color: rgb(var(--foreground-rgb));
