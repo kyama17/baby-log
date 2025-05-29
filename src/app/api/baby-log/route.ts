@@ -34,10 +34,10 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const { type }: { type: 'urination' | 'defecation' } = await request.json();
+  const { type, timestamp }: { type: 'urination' | 'defecation'; timestamp?: string } = await request.json();
   const newEntry: Omit<BabyLogEntry, 'id'> = {
     type,
-    timestamp: new Date().toISOString(),
+    timestamp: timestamp || new Date().toISOString(),
   };
 
   const supabase = getSupabaseClient();
