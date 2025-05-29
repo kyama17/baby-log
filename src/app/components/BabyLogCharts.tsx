@@ -194,7 +194,27 @@ export default function BabyLogCharts({ logEntries }: BabyLogChartsProps) {
                 cx="50%"
                 cy="50%"
                 labelLine={false}
-                label={{ fill: "var(--recharts-text-color)", fontSize: "0.875rem", formatter: ({ name, value, percent }) => `${name}: ${value}回 (${(percent * 100).toFixed(1)}%)` }}
+                label={(props) => {
+                  const { cx, cy, midAngle, outerRadius, name, value, percent } = props;
+                  const RADIAN = Math.PI / 180;
+                  // Calculate a position slightly outside the pie slice for the label
+                  const radius = outerRadius * 1.1; // Adjust multiplier for distance
+                  const x = cx + radius * Math.cos(-midAngle * RADIAN);
+                  const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+                  return (
+                    <text
+                      x={x}
+                      y={y}
+                      fill="var(--recharts-text-color)"
+                      fontSize="0.875rem" // 14px
+                      textAnchor={x > cx ? 'start' : 'end'} // Anchor text based on position relative to center
+                      dominantBaseline="central"
+                    >
+                      {`${name}: ${value}回 (${(percent * 100).toFixed(1)}%)`}
+                    </text>
+                  );
+                }}
                 outerRadius={80}
                 fill="#8884d8"
                 dataKey="value"
