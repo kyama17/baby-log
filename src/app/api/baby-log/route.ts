@@ -19,59 +19,80 @@ type BabyLogEntry = {
 };
 
 export async function GET(request: Request) {
-  const supabase = getSupabaseClient();
-  const { data, error } = await supabase
-    .from('baby_log')
-    .select('*')
-    .order('timestamp', { ascending: false });
+  try {
+    const supabase = getSupabaseClient();
+    const { data, error } = await supabase
+      .from('baby_log')
+      .select('*')
+      .order('timestamp', { ascending: false });
 
-  if (error) {
-    console.error('Error fetching baby log:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    if (error) {
+      console.error('Error fetching baby log:', error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    return NextResponse.json(data);
+  } catch (error) {
+    console.error('Unexpected error in GET /api/baby-log:', error);
+    return NextResponse.json({ 
+      error: error instanceof Error ? error.message : 'Supabase configuration error' 
+    }, { status: 500 });
   }
-
-  return NextResponse.json(data);
 }
 
 export async function POST(request: Request) {
-  const { type, timestamp }: { type: 'urination' | 'defecation'; timestamp?: string } = await request.json();
-  const newEntry: Omit<BabyLogEntry, 'id'> = {
-    type,
-    timestamp: timestamp || new Date().toISOString(),
-  };
+  try {
+    const { type, timestamp }: { type: 'urination' | 'defecation'; timestamp?: string } = await request.json();
+    const newEntry: Omit<BabyLogEntry, 'id'> = {
+      type,
+      timestamp: timestamp || new Date().toISOString(),
+    };
 
-  const supabase = getSupabaseClient();
-  const { data, error } = await supabase
-    .from('baby_log')
-    .insert([newEntry])
-    .select();
+    const supabase = getSupabaseClient();
+    const { data, error } = await supabase
+      .from('baby_log')
+      .insert([newEntry])
+      .select();
 
-  if (error) {
-    console.error('Error inserting baby log entry:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    if (error) {
+      console.error('Error inserting baby log entry:', error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    return NextResponse.json(data[0], { status: 201 });
+  } catch (error) {
+    console.error('Unexpected error in POST /api/baby-log:', error);
+    return NextResponse.json({ 
+      error: error instanceof Error ? error.message : 'Supabase configuration error' 
+    }, { status: 500 });
   }
-
-  return NextResponse.json(data[0], { status: 201 });
 }
 
 export async function DELETE(request: Request) {
-  const body = await request.json() as { id?: number };
-  const { id } = body;
+  try {
+    const body = await request.json() as { id?: number };
+    const { id } = body;
 
-  if (!id) {
-    return NextResponse.json({ error: "Missing id in request body" }, { status: 400 });
+    if (!id) {
+      return NextResponse.json({ error: "Missing id in request body" }, { status: 400 });
+    }
+
+    const supabase = getSupabaseClient();
+    const { error } = await supabase
+      .from('baby_log')
+      .delete()
+      .match({ id });
+
+    if (error) {
+      console.error('Error deleting baby log entry:', error);
+      return NextResponse.json({ error: "Failed to delete log entry" }, { status: 500 });
+    }
+
+    return NextResponse.json({ message: "Log entry deleted successfully" }, { status: 200 });
+  } catch (error) {
+    console.error('Unexpected error in DELETE /api/baby-log:', error);
+    return NextResponse.json({ 
+      error: error instanceof Error ? error.message : 'Supabase configuration error' 
+    }, { status: 500 });
   }
-
-  const supabase = getSupabaseClient();
-  const { error } = await supabase
-    .from('baby_log')
-    .delete()
-    .match({ id });
-
-  if (error) {
-    console.error('Error deleting baby log entry:', error);
-    return NextResponse.json({ error: "Failed to delete log entry" }, { status: 500 });
-  }
-
-  return NextResponse.json({ message: "Log entry deleted successfully" }, { status: 200 });
 }
