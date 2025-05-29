@@ -64,7 +64,7 @@ export default function DemoDataPage() {
     try {
       // 全データを取得
       const response = await fetch('/api/baby-log-mock');
-      const entries = await response.json();
+      const entries = await response.json() as Array<{id: string}>;
 
       // 全データを削除
       for (const entry of entries) {
