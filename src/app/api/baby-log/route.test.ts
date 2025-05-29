@@ -3,7 +3,12 @@
 // Declare the mock functions that will form the chain
 const mockMatch = jest.fn();
 const mockDeleteChain = jest.fn(() => ({ match: mockMatch }));
-const mockFromChain = jest.fn(() => ({ delete: mockDeleteChain }));
+const mockSelect = jest.fn();
+const mockInsert = jest.fn(() => ({ select: mockSelect }));
+const mockFromChain = jest.fn(() => ({ 
+  delete: mockDeleteChain,
+  insert: mockInsert
+}));
 
 // This is the function that will be assigned to the mocked createClient
 const supabaseClientMockImplementation = () => ({
@@ -15,8 +20,8 @@ jest.mock('@supabase/supabase-js', () => ({
   createClient: jest.fn().mockImplementation(() => supabaseClientMockImplementation()),
 }));
 
-// Import the DELETE function to test AFTER mocks are set up.
-import { DELETE } from './route';
+// Import the DELETE and POST functions to test AFTER mocks are set up.
+import { DELETE, POST } from './route';
 import { NextResponse } from 'next/server';
 
 describe('DELETE /api/baby-log', () => {
@@ -29,6 +34,8 @@ describe('DELETE /api/baby-log', () => {
     mockFromChain.mockClear();
     mockDeleteChain.mockClear();
     mockMatch.mockClear();
+    mockInsert.mockClear();
+    mockSelect.mockClear();
   });
 
   test('Test Case 1: Successful Deletion', async () => {
@@ -96,5 +103,61 @@ describe('DELETE /api/baby-log', () => {
 
     // Restore console.error
     consoleErrorSpy.mockRestore();
+  });
+});
+
+describe('POST /api/baby-log', () => {
+  beforeEach(() => {
+    mockFromChain.mockClear();
+    mockInsert.mockClear();
+    mockSelect.mockClear();
+  });
+
+  test('Test Case 1: POST with custom timestamp', async () => {
+    const mockEntry = { id: 1, type: 'urination', timestamp: '2023-12-25T10:30:00.000Z' };
+    mockSelect.mockResolvedValueOnce({ data: [mockEntry], error: null });
+
+    const customTimestamp = '2023-12-25T10:30:00.000Z';
+    const requestBody = { type: 'urination', timestamp: customTimestamp };
+    const request = new Request('http://localhost/api/baby-log', {
+      method: 'POST',
+      body: JSON.stringify(requestBody),
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    const response = await POST(request);
+    const responseBody = await response.json();
+
+    expect(response.status).toBe(201);
+    expect(responseBody).toEqual(mockEntry);
+    expect(mockFromChain).toHaveBeenCalledWith('baby_log');
+    expect(mockInsert).toHaveBeenCalledWith([{
+      type: 'urination',
+      timestamp: customTimestamp
+    }]);
+    expect(mockSelect).toHaveBeenCalledTimes(1);
+  });
+
+  test('Test Case 2: POST without timestamp (uses current time)', async () => {
+    const mockEntry = { id: 2, type: 'defecation', timestamp: expect.any(String) };
+    mockSelect.mockResolvedValueOnce({ data: [mockEntry], error: null });
+
+    const requestBody = { type: 'defecation' };
+    const request = new Request('http://localhost/api/baby-log', {
+      method: 'POST',
+      body: JSON.stringify(requestBody),
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    const response = await POST(request);
+    const responseBody = await response.json();
+
+    expect(response.status).toBe(201);
+    expect(mockFromChain).toHaveBeenCalledWith('baby_log');
+    expect(mockInsert).toHaveBeenCalledWith([{
+      type: 'defecation',
+      timestamp: expect.any(String)
+    }]);
+    expect(mockSelect).toHaveBeenCalledTimes(1);
   });
 });
