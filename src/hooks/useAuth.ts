@@ -1,137 +1,71 @@
 import { supabase } from '../lib/supabaseClient';
 import { User, AuthChangeEvent, Session, SignUpWithPasswordCredentials, SignInWithPasswordCredentials, AuthError } from '@supabase/supabase-js';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [initialized, setInitialized] = useState(false);
-  const mountedRef = useRef(true);
 
   useEffect(() => {
-    let isMounted = true;
-    
-    const initializeAuth = async () => {
+    let mounted = true;
+
+    // 初期セッション取得と認証リスナー設定を同時に行う
+    const initAuth = async () => {
       try {
-        // 初期セッションを取得
-        const { data: { session }, error } = await supabase.auth.getSession();
+        // 現在のセッションを取得
+        const { data: { session } } = await supabase.auth.getSession();
         
-        if (isMounted) {
-          if (error) {
-            console.error('Error getting session:', error);
-          }
+        if (mounted) {
           setUser(session?.user ?? null);
-          setInitialized(true);
           setLoading(false);
         }
       } catch (error) {
-        console.error('Error initializing auth:', error);
-        if (isMounted) {
+        console.error('Error getting initial session:', error);
+        if (mounted) {
           setUser(null);
-          setInitialized(true);
           setLoading(false);
         }
       }
     };
 
-    // 初期化がまだの場合のみ実行
-    if (!initialized) {
-      initializeAuth();
-    }
+    // 初期化実行
+    initAuth();
 
-    // Auth状態変更リスナーを設定
-    const { data: authListenerData } = supabase.auth.onAuthStateChange(
-      async (event: AuthChangeEvent, session: Session | null) => {
-        console.log('Auth state changed:', event, session?.user?.id);
-        
-        if (isMounted && mountedRef.current) {
+    // 認証状態変更リスナー設定
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event: AuthChangeEvent, session: Session | null) => {
+        if (mounted) {
           setUser(session?.user ?? null);
-          
-          // 初期化後のみローディングを false に
-          if (initialized) {
-            setLoading(false);
-          }
+          setLoading(false);
         }
       }
     );
 
-    // クリーンアップ関数
     return () => {
-      isMounted = false;
-      authListenerData?.subscription?.unsubscribe();
-    };
-  }, [initialized]); // initializedを依存配列に追加
-
-  // コンポーネントのアンマウント時の処理
-  useEffect(() => {
-    mountedRef.current = true;
-    return () => {
-      mountedRef.current = false;
+      mounted = false;
+      subscription.unsubscribe();
     };
   }, []);
 
   const signUp = async (credentials: SignUpWithPasswordCredentials) => {
-    try {
-      const { data, error } = await supabase.auth.signUp(credentials);
-      return { data, error };
-    } catch (error) {
-      return { data: null, error: error as AuthError };
-    }
+    const { data, error } = await supabase.auth.signUp(credentials);
+    return { data, error };
   };
 
   const signIn = async (credentials: SignInWithPasswordCredentials) => {
-    try {
-      setLoading(true);
-      const { data, error } = await supabase.auth.signInWithPassword(credentials);
-      
-      if (!error && data.user) {
-        // ログイン成功時は auth listener が状態を更新するのを待つ
-        // setLoading(false) は onAuthStateChange で実行される
-      } else {
-        setLoading(false);
-      }
-      
-      return { data, error };
-    } catch (error) {
-      setLoading(false);
-      return { data: null, error: error as AuthError };
-    }
+    const { data, error } = await supabase.auth.signInWithPassword(credentials);
+    return { data, error };
   };
 
   const signOut = async () => {
-    try {
-      setLoading(true);
-      const { error } = await supabase.auth.signOut();
-      
-      if (!error) {
-        // サインアウト成功時は auth listener が状態を更新するのを待つ
-      } else {
-        setLoading(false);
-      }
-      
-      return { error };
-    } catch (error) {
-      setLoading(false);
-      return { error: error as AuthError };
-    }
+    const { error } = await supabase.auth.signOut();
+    return { error };
   };
 
   const getCurrentUser = async () => {
-    try {
-      const { data: { user }, error } = await supabase.auth.getUser();
-      return { user, error };
-    } catch (error) {
-      return { user: null, error: error as AuthError };
-    }
+    const { data: { user }, error } = await supabase.auth.getUser();
+    return { user, error };
   };
 
-  return { 
-    user, 
-    loading, 
-    initialized, // 初期化状態も返す
-    signUp, 
-    signIn, 
-    signOut, 
-    getCurrentUser 
-  };
+  return { user, loading, signUp, signIn, signOut, getCurrentUser };
 }
