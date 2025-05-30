@@ -25,7 +25,7 @@ export default function AuthButton() {
     return (
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <span style={{ marginRight: '12px', color: '#333' }}>{user.email}</span>
-        <button 
+        <button
           onClick={handleLogout}
           style={{ padding: '8px 12px', backgroundColor: '#f44336', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
         >
@@ -35,7 +35,7 @@ export default function AuthButton() {
     );
   } else {
     return (
-      <button 
+      <button
         onClick={() => router.push('/login')}
         style={{ padding: '8px 12px', backgroundColor: '#0070f3', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
       >

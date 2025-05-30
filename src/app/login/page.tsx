@@ -92,14 +92,14 @@ export default function LoginPage() {
             style={{ width: '100%', padding: '8px', border: '1px solid #ddd', borderRadius: '4px' }}
           />
         </div>
-        <button 
+        <button
           type="submit"
           style={{ width: '100%', padding: '10px', backgroundColor: '#0070f3', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
         >
           {isSignUp ? 'Sign Up' : 'Sign In'}
         </button>
       </form>
-      <button 
+      <button
         onClick={() => {
           setIsSignUp(!isSignUp);
           setError(null); // Clear error when switching forms

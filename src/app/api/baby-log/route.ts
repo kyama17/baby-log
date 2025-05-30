@@ -56,7 +56,7 @@ export async function POST(request: Request) {
 
     // Explicitly type the body to ensure it matches what we expect.
     const body: { type: 'urination' | 'defecation'; timestamp?: string } = await request.json();
-    
+
     if (!body.type) {
         return NextResponse.json({ error: "Missing 'type' in request body" }, { status: 400 });
     }
@@ -77,7 +77,7 @@ export async function POST(request: Request) {
       console.error('Error inserting baby log entry:', error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
-    
+
     // Supabase insert with .select() returns an array.
     // If data exists and is not empty, return the first element.
     if (data && data.length > 0) {

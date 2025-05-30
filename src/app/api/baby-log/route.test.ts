@@ -18,12 +18,12 @@ const mockSupabaseClient = {
     getUser: mockGetUser,
   },
   from: mockFrom.mockReturnThis(),
-  select: mockSelect.mockReturnThis(), 
+  select: mockSelect.mockReturnThis(),
   insert: mockInsert.mockReturnThis(), // insert().select() needs insert to be chainable
-  delete: mockDelete.mockReturnThis(), 
-  match: mockMatch.mockResolvedValue({ data: [{}], error: null }), 
+  delete: mockDelete.mockReturnThis(),
+  match: mockMatch.mockResolvedValue({ data: [{}], error: null }),
   eq: mockEq.mockReturnThis(),
-  order: mockOrder.mockReturnThis(), 
+  order: mockOrder.mockReturnThis(),
 };
 
 // Mock @supabase/auth-helpers-nextjs
@@ -34,7 +34,7 @@ jest.mock('@supabase/auth-helpers-nextjs', () => ({
 // Mock next/headers
 jest.mock('next/headers', () => ({
   cookies: jest.fn(() => ({
-    get: jest.fn(), 
+    get: jest.fn(),
     set: jest.fn(),
   })),
 }));
@@ -45,7 +45,7 @@ describe('API /api/baby-log', () => {
 
     // Reset to default behaviors for mockSupabaseClient methods directly
     mockSupabaseClient.auth.getUser.mockResolvedValue({ data: { user: null }, error: null }); // Default: no user
-    
+
     // For GET: from('baby_log').select('*').eq('user_id', user.id).order('timestamp', { ascending: false })
     // Default for a successful GET returning empty array.
     // The chain needs to be re-mocked for specific return values in tests.
@@ -78,13 +78,13 @@ describe('API /api/baby-log', () => {
     it('should return user logs if authenticated', async () => {
       const mockUser = { id: 'test-user-id', email: 'user@example.com' };
       mockSupabaseClient.auth.getUser.mockResolvedValueOnce({ data: { user: mockUser }, error: null });
-      
+
       const sampleLogs = [{ id: 1, type: 'urination', timestamp: 'sometime', user_id: mockUser.id }];
       // Specific mock for GET: from('baby_log').select('*').eq('user_id', user.id).order('timestamp', { ascending: false })
       mockSupabaseClient.from.mockReturnValueOnce({
-        select: jest.fn().mockReturnThis(), 
-        eq: jest.fn().mockReturnThis(),    
-        order: jest.fn().mockResolvedValueOnce({ data: sampleLogs, error: null }), 
+        select: jest.fn().mockReturnThis(),
+        eq: jest.fn().mockReturnThis(),
+        order: jest.fn().mockResolvedValueOnce({ data: sampleLogs, error: null }),
       });
 
       const request = new Request('http://localhost/api/baby-log', { method: 'GET' });
@@ -122,12 +122,12 @@ describe('API /api/baby-log', () => {
 
       const requestBody = { type: 'urination', timestamp: new Date().toISOString() };
       const createdEntry = { ...requestBody, id: 1, user_id: mockUser.id };
-      
+
       // Specific mock for POST: from('baby_log').insert(...).select()
       // Ensure 'select' is a separate mock that can be controlled after 'insert'
       const mockSelectAfterInsert = jest.fn().mockResolvedValueOnce({ data: [createdEntry], error: null });
-      mockSupabaseClient.from.mockReturnValueOnce({ 
-        insert: jest.fn().mockReturnThis(), 
+      mockSupabaseClient.from.mockReturnValueOnce({
+        insert: jest.fn().mockReturnThis(),
         select: mockSelectAfterInsert,
       });
 
@@ -140,7 +140,7 @@ describe('API /api/baby-log', () => {
       expect(response.status).toBe(201);
       const body = await response.json();
       expect(body).toEqual(createdEntry);
-      
+
       const fromResult = mockSupabaseClient.from.mock.results[0].value;
       expect(fromResult.insert).toHaveBeenCalledWith([expect.objectContaining({ type: requestBody.type, user_id: mockUser.id })]);
       expect(mockSelectAfterInsert).toHaveBeenCalledTimes(1);
@@ -149,7 +149,7 @@ describe('API /api/baby-log', () => {
     it('should return 400 for invalid data (e.g. missing type)', async () => {
       const mockUser = { id: 'test-user-id', email: 'user@example.com' };
       mockSupabaseClient.auth.getUser.mockResolvedValueOnce({ data: { user: mockUser }, error: null });
-      
+
       const requestBody = { timestamp: new Date().toISOString() }; // Missing type
       const request = new Request('http://localhost/api/baby-log', {
         method: 'POST',
@@ -181,12 +181,12 @@ describe('API /api/baby-log', () => {
     it('should delete a log entry if authenticated and owns the log', async () => {
       const mockUser = { id: 'test-user-id', email: 'user@example.com' };
       mockSupabaseClient.auth.getUser.mockResolvedValueOnce({ data: { user: mockUser }, error: null });
-      
+
       // Specific mock for DELETE: from('baby_log').delete().match(...)
       const mockMatchAfterDelete = jest.fn().mockResolvedValueOnce({ error: null });
-      mockSupabaseClient.from.mockReturnValueOnce({ 
-        delete: jest.fn().mockReturnThis(), 
-        match: mockMatchAfterDelete, 
+      mockSupabaseClient.from.mockReturnValueOnce({
+        delete: jest.fn().mockReturnThis(),
+        match: mockMatchAfterDelete,
       });
 
       const requestBody = { id: 1 };
@@ -208,7 +208,7 @@ describe('API /api/baby-log', () => {
     it('should return 500 if delete fails in DB', async () => {
       const mockUser = { id: 'test-user-id', email: 'user@example.com' };
       mockSupabaseClient.auth.getUser.mockResolvedValueOnce({ data: { user: mockUser }, error: null });
-      
+
       const dbError = { message: "DB delete error" };
       const mockMatchAfterDelete = jest.fn().mockResolvedValueOnce({ error: dbError });
       mockSupabaseClient.from.mockReturnValueOnce({
@@ -231,7 +231,7 @@ describe('API /api/baby-log', () => {
      it('should return 400 if no id is provided', async () => {
       const mockUser = { id: 'test-user-id', email: 'user@example.com' };
       mockSupabaseClient.auth.getUser.mockResolvedValueOnce({ data: { user: mockUser }, error: null });
-      
+
       const requestBody = {}; // Missing id
       const request = new Request('http://localhost/api/baby-log', {
         method: 'DELETE',

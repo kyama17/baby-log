@@ -54,7 +54,7 @@ describe('useAuth Hook', () => {
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
     });
-    
+
     expect(supabase.auth.getSession).toHaveBeenCalledTimes(1);
     expect(supabase.auth.onAuthStateChange).toHaveBeenCalledTimes(1);
     expect(result.current.user).toBeNull(); // Based on default getSession mock
@@ -90,7 +90,7 @@ describe('useAuth Hook', () => {
     expect(signUpResult).toEqual(mockResponse);
     // User state might not change until onAuthStateChange is triggered or if signUp implies login
   });
-  
+
   it('should handle signIn correctly and update user state via onAuthStateChange', async () => {
     const mockCredentials = { email: 'test@example.com', password: 'password123' };
     const mockUser: User = { id: 'signin-user', app_metadata: {}, user_metadata: {}, aud: 'authenticated', email: mockCredentials.email };
@@ -98,7 +98,7 @@ describe('useAuth Hook', () => {
     const mockSignInResponse = { data: { user: mockUser, session: mockSession }, error: null };
 
     (supabase.auth.signInWithPassword as jest.Mock).mockResolvedValueOnce(mockSignInResponse);
-    
+
     const { result } = renderHook(() => useAuth());
 
     // Ensure initial loading is done
@@ -165,7 +165,7 @@ describe('useAuth Hook', () => {
     // Simulate SIGNED_IN event
     const mockUserSignedIn: User = { id: 'new-user', app_metadata: {}, user_metadata: {}, aud: 'authenticated', email: 'new@example.com' };
     const mockSessionSignedIn: Session = { access_token: 'new-token', token_type: 'bearer', user: mockUserSignedIn, expires_in: 3600, refresh_token: 'new-refresh' };
-    
+
     if (onAuthStateChangeCallback) {
       await act(async () => {
         onAuthStateChangeCallback('SIGNED_IN', mockSessionSignedIn);
@@ -192,25 +192,25 @@ describe('useAuth Hook', () => {
 
     const { unmount } = renderHook(() => useAuth());
     await waitFor(() => expect(supabase.auth.onAuthStateChange).toHaveBeenCalled());
-    
+
     act(() => {
       unmount();
     });
 
     expect(unsubscribeMock).toHaveBeenCalledTimes(1);
   });
-  
+
   it('getCurrentUser should call supabase.auth.getUser and return user', async () => {
     const mockUser: User = { id: 'get-user', app_metadata: {}, user_metadata: {}, aud: 'authenticated', email: 'get@example.com' };
     (supabase.auth.getUser as jest.Mock).mockResolvedValueOnce({ data: { user: mockUser }, error: null });
-    
+
     const { result } = renderHook(() => useAuth());
-    
+
     let currentUserResult;
     await act(async () => {
       currentUserResult = await result.current.getCurrentUser();
     });
-    
+
     expect(supabase.auth.getUser).toHaveBeenCalledTimes(1); // Note: getUser might be called during initial load by onAuthStateChange depending on its internal behavior
     expect(currentUserResult).toEqual({ user: mockUser, error: null });
   });
@@ -221,7 +221,7 @@ describe('useAuth Hook', () => {
     (supabase.auth.signUp as jest.Mock).mockResolvedValueOnce({ data: {user: null, session: null}, error: mockError });
 
     const { result } = renderHook(() => useAuth());
-    
+
     let signUpResult;
     await act(async () => {
       signUpResult = await result.current.signUp(mockCredentials);
@@ -236,7 +236,7 @@ describe('useAuth Hook', () => {
     (supabase.auth.signInWithPassword as jest.Mock).mockResolvedValueOnce({ data: {user: null, session: null}, error: mockError });
 
     const { result } = renderHook(() => useAuth());
-    
+
     let signInResult;
     await act(async () => {
       signInResult = await result.current.signIn(mockCredentials);
@@ -248,9 +248,9 @@ describe('useAuth Hook', () => {
   it('signOut should return error if supabase.auth.signOut fails', async () => {
     const mockError = { name: 'AuthApiError', message: 'Sign out failed' };
     (supabase.auth.signOut as jest.Mock).mockResolvedValueOnce({ error: mockError });
-    
+
     const { result } = renderHook(() => useAuth());
-        
+
     let signOutResult;
     await act(async () => {
       signOutResult = await result.current.signOut();

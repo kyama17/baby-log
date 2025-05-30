@@ -133,14 +133,14 @@ export default function BabyLogPage() {
         setLogEntries((prev) => prev.filter((entry) => entry.id !== id));
       } else {
         // Assuming if response is not ok, it will be an ApiError JSON
-        const errorData = await response.json() as ApiError; 
+        const errorData = await response.json() as ApiError;
         console.error('Failed to delete entry:', errorData);
         if (response.status === 401) {
             alert('Authentication error. Please login again.');
             router.push('/login');
         } else {
             // errorData should have an .error property due to ApiError type
-            alert(`データの削除に失敗しました: ${errorData.error || 'Server error'}`); 
+            alert(`データの削除に失敗しました: ${errorData.error || 'Server error'}`);
         }
       }
     } catch (error) {
