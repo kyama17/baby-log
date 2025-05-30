@@ -28,23 +28,17 @@ export function useAuth() {
   }, []);
 
   const signUp = async (credentials: SignUpWithPasswordCredentials) => {
-    setLoading(true);
     const { data, error } = await supabase.auth.signUp(credentials);
-    setLoading(false);
     return { data, error };
   };
 
   const signIn = async (credentials: SignInWithPasswordCredentials) => {
-    setLoading(true);
     const { data, error } = await supabase.auth.signInWithPassword(credentials);
-    setLoading(false);
     return { data, error };
   };
 
   const signOut = async () => {
-    setLoading(true);
     const { error } = await supabase.auth.signOut();
-    setLoading(false);
     return { error };
   };
 
