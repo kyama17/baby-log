@@ -9,6 +9,7 @@
 - 赤ちゃんのおしっことうんちを記録
 - 記録されたログを表示
 - 日本語対応のユーザーインターフェース
+- **ユーザー認証**: Supabaseを利用したメールアドレスとパスワードによるサインアップ・サインイン機能。ユーザーはアカウントを作成して、自分の赤ちゃんの活動記録を管理できます。
 
 ## Getting Started
 
@@ -23,6 +24,10 @@ pnpm install
 # または
 bun install
 ```
+
+### 環境設定 (Environment Setup)
+
+Supabaseとの連携のため、プロジェクトのルートにある `.env.example` ファイルを参考に `.env.local` ファイルを作成し、必要なSupabaseの環境変数（`NEXT_PUBLIC_SUPABASE_URL` および `NEXT_PUBLIC_SUPABASE_ANON_KEY`）を設定してください。
 
 次に、開発サーバーを起動します：
 

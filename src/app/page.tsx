@@ -1,48 +1,82 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuthContext } from '@/contexts/AuthContext'; // Using alias
 import BabyLogCharts from './components/BabyLogCharts';
 
 type BabyLogEntry = {
   id: number;
+  // user_id?: string; // This field exists in the DB but might not be used directly in frontend state unless needed
   type: 'urination' | 'defecation';
   timestamp: string;
 };
 
 export default function BabyLogPage() {
+  const { user, loading: authLoading } = useAuthContext();
+  const router = useRouter();
+
   const [logEntries, setLogEntries] = useState<BabyLogEntry[]>([]);
   const [type, setType] = useState<'urination' | 'defecation'>('urination');
   const [datetime, setDatetime] = useState<string>(() => {
-    // デフォルトは現在時刻（ローカルタイムゾーン）
     const now = new Date();
     now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
     return now.toISOString().slice(0, 16);
   });
+  const [isLoadingLogs, setIsLoadingLogs] = useState(true); // For loading state of logs
 
+  // Authentication check and redirection
   useEffect(() => {
-    fetch('/api/baby-log')
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        if (Array.isArray(data)) {
-          setLogEntries(data as BabyLogEntry[]);
-        } else {
-          console.error('Received non-array data:', data);
-          setLogEntries([]);
-        }
-      })
-      .catch((error) => {
-        console.error('Error fetching baby log:', error);
-        setLogEntries([]);
-      });
-  }, []);
+    if (!authLoading && !user) {
+      router.push('/login');
+    }
+  }, [user, authLoading, router]);
+
+  // Data fetching - only if user is authenticated
+  useEffect(() => {
+    if (user) {
+      setIsLoadingLogs(true);
+      fetch('/api/baby-log')
+        .then((response) => {
+          if (!response.ok) {
+            // If unauthorized, Supabase middleware might redirect or API returns 401
+            // which will be caught here.
+            if (response.status === 401) {
+              router.push('/login'); // Explicitly redirect if API call fails due to auth
+            }
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then((data) => {
+          if (Array.isArray(data)) {
+            setLogEntries(data as BabyLogEntry[]);
+          } else {
+            console.error('Received non-array data:', data);
+            setLogEntries([]);
+          }
+        })
+        .catch((error) => {
+          console.error('Error fetching baby log:', error);
+          setLogEntries([]); // Clear logs on error
+        })
+        .finally(() => {
+          setIsLoadingLogs(false);
+        });
+    } else {
+      // If no user, clear logs and don't attempt to fetch
+      setLogEntries([]);
+      setIsLoadingLogs(false);
+    }
+  }, [user, router]); // router added as dependency for the push call
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user) { // Should not happen if UI is correctly showing loading/redirecting
+      alert("User not authenticated. Please login.");
+      router.push('/login');
+      return;
+    }
     try {
       const response = await fetch('/api/baby-log', {
         method: 'POST',
@@ -56,27 +90,35 @@ export default function BabyLogPage() {
       });
       
       if (!response.ok) {
+        if (response.status === 401) {
+          alert('Authentication error. Please login again.');
+          router.push('/login');
+        }
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
       const newEntry = await response.json();
-      if (newEntry && typeof newEntry === 'object') {
+      if (newEntry && typeof newEntry === 'object' && newEntry.id) {
         setLogEntries((prev) => [newEntry, ...prev] as BabyLogEntry[]);
         
-        // 送信後、日時を現在時刻にリセット
         const now = new Date();
         now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
         setDatetime(now.toISOString().slice(0, 16));
       } else {
-        throw new Error('Invalid response data');
+        throw new Error('Invalid response data from server');
       }
     } catch (error) {
       console.error('Error submitting baby log:', error);
-      alert('データの保存に失敗しました。Supabaseの設定を確認してください。');
+      alert('データの保存に失敗しました。');
     }
   };
 
   const handleDelete = async (id: number) => {
+    if (!user) {
+      alert("User not authenticated. Please login.");
+      router.push('/login');
+      return;
+    }
     try {
       const response = await fetch('/api/baby-log', {
         method: 'DELETE',
@@ -89,20 +131,38 @@ export default function BabyLogPage() {
       if (response.ok) {
         setLogEntries((prev) => prev.filter((entry) => entry.id !== id));
       } else {
-        const errorData = await response.json();
+        const errorData = await response.json().catch(() => ({})); // Catch if no JSON body
         console.error('Failed to delete entry:', errorData);
-        alert('データの削除に失敗しました。Supabaseの設定を確認してください。');
+        if (response.status === 401) {
+            alert('Authentication error. Please login again.');
+            router.push('/login');
+        } else {
+            alert(`データの削除に失敗しました: ${errorData.error || 'Server error'}`);
+        }
       }
     } catch (error) {
       console.error('Failed to delete entry:', error);
-      alert('データの削除に失敗しました。Supabaseの設定を確認してください。');
+      alert('データの削除中に予期せぬエラーが発生しました。');
     }
   };
 
+  // Display loading indicator while checking auth or if user is null (before redirect)
+  // or while logs are loading
+  if (authLoading || isLoadingLogs || !user) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
+  // Render the actual page content here if user is authenticated
   return (
     <div className="container mx-auto p-4 max-w-6xl">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">🍼 赤ちゃんのトイレログ</h1>
+        {/* The AuthButton could be placed here or in the main layout */}
+        {/* For example: <AuthButton /> */}
         <a
           href="/demo-data"
           className="text-sm bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded transition-colors duration-200 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-300"
