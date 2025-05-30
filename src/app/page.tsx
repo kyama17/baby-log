@@ -150,17 +150,50 @@ export default function BabyLogPage() {
     }
   };
 
-  // Display loading indicator while checking auth or if user is null (before redirect)
-  // or while logs are loading
-  if (authLoading || isLoadingLogs || !user) {
+  if (authLoading) {
+    // If authentication is in progress, show an "Authenticating..." message.
+    // This is the highest priority check.
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <p>Loading...</p>
+        <p>Authenticating...</p>
       </div>
     );
   }
 
-  // Render the actual page content here if user is authenticated
+  // If authentication is complete (authLoading is false) but there is no user,
+  // it means the user is not logged in.
+  // The useEffect hook:
+  //   useEffect(() => {
+  //     if (!authLoading && !user) {
+  //       router.push('/login');
+  //     }
+  //   }, [user, authLoading, router]);
+  // will handle the redirection to the login page.
+  // We return a message here to prevent rendering the rest of the page
+  // or other loading states like isLoadingLogs, and to avoid a flash of content.
+  if (!user) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <p>Redirecting to login...</p>
+      </div>
+    );
+  }
+
+  // If authentication is complete (authLoading is false) and a user is present,
+  // then check if logs are being loaded.
+  if (isLoadingLogs) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <p>Loading data...</p>
+      </div>
+    );
+  }
+
+  // If all checks above have passed, it means:
+  // - Authentication is complete (authLoading is false).
+  // - A user is logged in (user object is present).
+  // - Log data has been loaded (isLoadingLogs is false).
+  // Now it's safe to render the actual page content.
   return (
     <div className="container mx-auto p-4 max-w-6xl">
       <div className="flex justify-between items-center mb-6">
