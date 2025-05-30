@@ -18,18 +18,19 @@ import {
 } from 'recharts';
 import { format, parseISO, startOfDay, eachDayOfInterval, subDays } from 'date-fns';
 import { ja } from 'date-fns/locale';
+import { BabyLogEntry } from '@/types'; // Import the centralized type
 
-type BabyLogEntry = {
-  id: number;
-  type: 'urination' | 'defecation';
-  timestamp: string;
-};
+// type BabyLogEntry = {
+//   id: number;
+//   type: 'urination' | 'defecation';
+//   timestamp: string;
+// };
 
 // LogEntry型をエクスポート
-export type { BabyLogEntry as LogEntry };
+// export type { BabyLogEntry as LogEntry }; // No longer needed if using imported type directly
 
 interface BabyLogChartsProps {
-  logEntries: BabyLogEntry[];
+  logEntries: BabyLogEntry[]; // Uses the imported BabyLogEntry
 }
 
 // const COLORS = {
