@@ -4,3 +4,7 @@ export type BabyLogEntry = {
   type: 'urination' | 'defecation';
   timestamp: string; // ISO string format for dates
 };
+
+export type ApiError = {
+  error: string;
+};

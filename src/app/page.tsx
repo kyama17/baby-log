@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthContext } from '@/contexts/AuthContext'; // Using alias
 import BabyLogCharts from './components/BabyLogCharts';
-import { BabyLogEntry } from '@/types'; // Import the centralized type
+import { BabyLogEntry, ApiError } from '@/types'; // Import ApiError
 
 // type BabyLogEntry = {
 //   id: number;
@@ -132,17 +132,20 @@ export default function BabyLogPage() {
       if (response.ok) {
         setLogEntries((prev) => prev.filter((entry) => entry.id !== id));
       } else {
-        const errorData = await response.json().catch(() => ({})); // Catch if no JSON body
+        // Assuming if response is not ok, it will be an ApiError JSON
+        const errorData = await response.json() as ApiError; 
         console.error('Failed to delete entry:', errorData);
         if (response.status === 401) {
             alert('Authentication error. Please login again.');
             router.push('/login');
         } else {
-            alert(`データの削除に失敗しました: ${errorData.error || 'Server error'}`);
+            // errorData should have an .error property due to ApiError type
+            alert(`データの削除に失敗しました: ${errorData.error || 'Server error'}`); 
         }
       }
     } catch (error) {
-      console.error('Failed to delete entry:', error);
+      // This outer catch will handle network errors or if response.json() fails parsing
+      console.error('Failed to delete entry or parse error response:', error);
       alert('データの削除中に予期せぬエラーが発生しました。');
     }
   };
