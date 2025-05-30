@@ -7,23 +7,43 @@ export function useAuth() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setLoading(true);
-    const getCurrentSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setUser(session?.user ?? null);
-      setLoading(false);
-    };
-    getCurrentSession();
+    let mounted = true;
 
-    const { data: authListenerData } = supabase.auth.onAuthStateChange(async (event: AuthChangeEvent, session: Session | null) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
+    // 初期セッション取得と認証リスナー設定を同時に行う
+    const initAuth = async () => {
+      try {
+        // 現在のセッションを取得
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (mounted) {
+          setUser(session?.user ?? null);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error('Error getting initial session:', error);
+        if (mounted) {
+          setUser(null);
+          setLoading(false);
+        }
+      }
+    };
+
+    // 初期化実行
+    initAuth();
+
+    // 認証状態変更リスナー設定
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event: AuthChangeEvent, session: Session | null) => {
+        if (mounted) {
+          setUser(session?.user ?? null);
+          setLoading(false);
+        }
+      }
+    );
 
     return () => {
-      // The authListenerData itself is { data: { subscription }, error: null | AuthError }
-      // So we need to access authListenerData.subscription to unsubscribe
-      authListenerData?.subscription?.unsubscribe();
+      mounted = false;
+      subscription.unsubscribe();
     };
   }, []);
 
@@ -43,7 +63,7 @@ export function useAuth() {
   };
 
   const getCurrentUser = async () => {
-    const { data: { user } , error } = await supabase.auth.getUser();
+    const { data: { user }, error } = await supabase.auth.getUser();
     return { user, error };
   };
 
