@@ -55,6 +55,9 @@ non_functional_requirements:
           values: ['urination', 'defecation']
         - name: timestamp
           type: datetime
+        - name: user_id
+          type: uuid
+          description: "Foreign key to the user who created the log entry. References auth.users(id)."
   api_endpoints:
     - path: /api/baby-log
       methods:
