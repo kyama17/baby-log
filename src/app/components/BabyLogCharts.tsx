@@ -25,6 +25,9 @@ type BabyLogEntry = {
   timestamp: string;
 };
 
+// LogEntry型をエクスポート
+export type { BabyLogEntry as LogEntry };
+
 interface BabyLogChartsProps {
   logEntries: BabyLogEntry[];
 }
@@ -238,7 +241,8 @@ export default function BabyLogCharts({ logEntries }: BabyLogChartsProps) {
         <div className="bg-white dark:bg-gray-700 p-4 rounded-lg border">
           <div className="text-sm text-gray-600 dark:text-gray-300">1日平均</div>
           <div className="text-2xl font-bold">
-            {dailyData.length > 0 ? (logEntries.length / 7).toFixed(1) : 0}
+            {/* 過去7日間の実データで平均を計算 */}
+            {dailyData.length > 0 ? (dailyData.reduce((sum, day) => sum + day.total, 0) / 7).toFixed(1) : 0}
           </div>
         </div>
         <div className="bg-white dark:bg-gray-700 p-4 rounded-lg border">

@@ -114,7 +114,7 @@ export default function DemoDataPage() {
         </div>
 
         {message && (
-          <div className="mt-4 p-3 bg-green-100 text-green-700 rounded">
+          <div data-testid="message-area" className="mt-4 p-3 bg-green-100 text-green-700 rounded">
             {message}
           </div>
         )}
