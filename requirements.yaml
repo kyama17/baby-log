@@ -1,0 +1,104 @@
+# Overall Application Requirements
+application_name: ベビーログアプリ (Baby Log App)
+objective: Track and visualize a baby's toilet activities (urination and defecation).
+target_users: Parents or caregivers.
+deployment_environment: Cloudflare Workers (as a static site with serverless functions).
+
+# Functional Requirements
+functional_requirements:
+  log_entry_creation:
+    description: Ability to record new toilet activity.
+    inputs:
+      - field: type
+        description: Type of activity (urination/defecation).
+        type: enum
+        values: ['urination', 'defecation']
+      - field: timestamp
+        description: Date and time of the activity.
+        type: datetime
+    default_timestamp: Current time.
+    persistence: New entries are persisted to the backend.
+  log_entry_display:
+    description: Display a list of recorded activities.
+    details:
+      - Show type (icon and text) and timestamp for each entry.
+      - Order entries by timestamp (most recent first).
+      - Display the latest 20 entries with an indicator of the total number of entries.
+  log_entry_deletion:
+    description: Ability to delete individual log entries.
+    confirmation: Implicitly handled by button click.
+    effect: Removes entry from display and backend.
+  data_visualization:
+    description: Display charts visualizing log data.
+    component: src/app/components/BabyLogCharts.tsx
+  demo_data:
+    description: Provide a page or mechanism to view/load demo data.
+    link: /demo-data
+
+# Non-Functional Requirements
+non_functional_requirements:
+  user_interface:
+    language: Japanese
+    responsiveness: Responsive design (implied by Tailwind CSS and Next.js).
+    usability: Clear and intuitive interface.
+  data_storage:
+    database: Supabase
+    schema:
+      table_name: baby_log
+      columns:
+        - name: id
+          type: integer
+          primary_key: true
+          auto_increment: true
+        - name: type
+          type: enum
+          values: ['urination', 'defecation']
+        - name: timestamp
+          type: datetime
+  api_endpoints:
+    - path: /api/baby-log
+      methods:
+        GET:
+          description: Retrieve all log entries.
+        POST:
+          description: Create a new log entry.
+        DELETE:
+          description: Delete a log entry.
+  error_handling:
+    - Display user-friendly error messages for failed operations.
+    - Log errors to the console for debugging.
+  technology_stack:
+    frontend:
+      - Next.js
+      - React
+      - Tailwind CSS
+    backend_api: Next.js API Routes
+    database: Supabase
+    charting: Recharts
+    date_time_utilities: date-fns
+
+# Project Structure Overview
+project_structure:
+  key_files_directories:
+    - path: src/app/page.tsx
+      description: Main application page UI and logic.
+    - path: src/app/api/baby-log/route.ts
+      description: Backend API for log management.
+    - path: src/app/components/BabyLogCharts.tsx
+      description: Component for data visualization.
+    - path: src/app/layout.tsx
+      description: Main application layout and navigation.
+    - path: public/
+      description: Static assets.
+    - path: package.json
+      description: Project dependencies and scripts.
+    - path: README.md
+      description: Project overview and setup instructions.
+    - path: .env.example
+      description: Example environment variables for Supabase keys.
+    - path: next.config.mjs
+      description: Next.js configuration.
+    - path: tailwind.config.ts
+      description: Tailwind CSS configuration.
+    - path: tsconfig.json
+      description: TypeScript configuration.
