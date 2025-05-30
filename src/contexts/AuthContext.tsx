@@ -1,3 +1,5 @@
+'use client';
+
 import React, { ReactNode, createContext, useContext, useEffect, useState } from 'react';
 import { User, AuthError } from '@supabase/supabase-js';
 import { useAuth } from '../hooks/useAuth'; // Assuming useAuth returns signIn, signUp, signOut with specific signatures
