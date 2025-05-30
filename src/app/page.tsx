@@ -4,13 +4,14 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthContext } from '@/contexts/AuthContext'; // Using alias
 import BabyLogCharts from './components/BabyLogCharts';
+import { BabyLogEntry } from '@/types'; // Import the centralized type
 
-type BabyLogEntry = {
-  id: number;
-  // user_id?: string; // This field exists in the DB but might not be used directly in frontend state unless needed
-  type: 'urination' | 'defecation';
-  timestamp: string;
-};
+// type BabyLogEntry = {
+//   id: number;
+//   // user_id?: string; // This field exists in the DB but might not be used directly in frontend state unless needed
+//   type: 'urination' | 'defecation';
+//   timestamp: string;
+// };
 
 export default function BabyLogPage() {
   const { user, loading: authLoading } = useAuthContext();
@@ -97,9 +98,9 @@ export default function BabyLogPage() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
-      const newEntry = await response.json();
+      const newEntry = await response.json() as BabyLogEntry;
       if (newEntry && typeof newEntry === 'object' && newEntry.id) {
-        setLogEntries((prev) => [newEntry, ...prev] as BabyLogEntry[]);
+        setLogEntries((prev) => [newEntry, ...prev]); // No need for 'as BabyLogEntry[]' if newEntry is already typed
         
         const now = new Date();
         now.setMinutes(now.getMinutes() - now.getTimezoneOffset());

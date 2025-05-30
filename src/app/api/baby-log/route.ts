@@ -1,15 +1,16 @@
 import { NextResponse } from 'next/server';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
+import { BabyLogEntry } from '@/types'; // Import the centralized type
 
 // The BabyLogEntry type might need user_id if you're directly using it with fetched data
 // that includes user_id. For insertion, it's handled separately.
-type BabyLogEntry = {
-  id?: number;
-  user_id?: string; // Optional here, but will be in the database
-  type: 'urination' | 'defecation';
-  timestamp: string;
-};
+// type BabyLogEntry = {
+//   id?: number;
+//   user_id?: string; // Optional here, but will be in the database
+//   type: 'urination' | 'defecation';
+//   timestamp: string;
+// };
 
 export async function GET(request: Request) {
   const cookieStore = cookies();
