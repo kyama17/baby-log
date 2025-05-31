@@ -29,7 +29,7 @@ export default function LoginPage() {
         if (signUpError) {
           // Check if the error is due to email confirmation
           if (signUpError.message.includes('Email confirmation')) {
-             setError('Sign up successful! Please check your email to confirm your account.');
+             setError('認証メールを送信したので確認してください。');
              // Optionally, you might not want to redirect immediately here,
              // or redirect to a page that says "please confirm your email".
              // For now, we'll clear the form and let the user know.
