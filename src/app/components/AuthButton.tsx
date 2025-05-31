@@ -1,25 +1,16 @@
-'use client';
+'use client'
 
-import { useAuthContext } from '@/contexts/AuthContext'; // Using alias
-import { useRouter } from 'next/navigation';
+import { User } from '@supabase/supabase-js'
+import { logout } from '@/app/actions/authActions' // Ensure this path is correct
 
-export default function AuthButton() {
-  const { user, signOut, loading } = useAuthContext();
-  const router = useRouter();
+interface AuthButtonProps {
+  user: User | null;
+}
 
+export default function AuthButton({ user }: AuthButtonProps) {
   const handleLogout = async () => {
-    const { error } = await signOut();
-    if (error) {
-      console.error('Error signing out:', error.message);
-      // Optionally show an error to the user via a toast or state update
-    } else {
-      router.push('/login'); // Redirect to login page after logout
-    }
+    await logout();
   };
-
-  if (loading) {
-    return <button style={{ padding: '8px 12px', border: '1px solid #ccc', borderRadius: '4px', cursor: 'default', color: '#555' }} disabled>...</button>;
-  }
 
   if (user) {
     return (
@@ -35,12 +26,12 @@ export default function AuthButton() {
     );
   } else {
     return (
-      <button
-        onClick={() => router.push('/login')}
-        style={{ padding: '8px 12px', backgroundColor: '#0070f3', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+      <a
+        href="/login"
+        style={{ padding: '8px 12px', backgroundColor: '#0070f3', color: 'white', textDecoration: 'none', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
       >
         Login
-      </button>
+      </a>
     );
   }
 }
