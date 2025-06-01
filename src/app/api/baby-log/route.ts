@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/utils/supabase/server';
 import { cookies } from 'next/headers';
 import { BabyLogEntry } from '@/types'; // Import the centralized type
 
@@ -13,8 +13,7 @@ import { BabyLogEntry } from '@/types'; // Import the centralized type
 // };
 
 export async function GET(request: Request) {
-  const cookieStore = cookies();
-  const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
+  const supabase = await createClient();
 
   try {
     const { data: { user }, error: userError } = await supabase.auth.getUser();
@@ -44,8 +43,7 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const cookieStore = cookies();
-  const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
+  const supabase = await createClient();
 
   try {
     const { data: { user }, error: userError } = await supabase.auth.getUser();
@@ -101,8 +99,7 @@ export async function POST(request: Request) {
 }
 
 export async function DELETE(request: Request) {
-  const cookieStore = cookies();
-  const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
+  const supabase = await createClient();
 
   try {
     const { data: { user }, error: userError } = await supabase.auth.getUser();

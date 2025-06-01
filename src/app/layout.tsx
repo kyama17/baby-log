@@ -18,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ja"> {/* Ensure lang is 'ja' */}
+    <html lang="ja" className="mdl-js"> 
       <body className={inter.className}>
         <AuthProvider>
           <nav className="bg-gray-800 p-4">
