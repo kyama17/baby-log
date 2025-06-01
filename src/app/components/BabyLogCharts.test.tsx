@@ -121,10 +121,12 @@ describe('BabyLogCharts', () => {
     });
 
     it('1日平均が正しく計算されて表示される (過去7日間)', () => {
-      // コンポーネント側の修正（過去7日間の実データで計算）を期待して、期待値を1.0にする
-      // 過去7日間のデータ数: 今日(3) + 昨日(2) + 3日前(1) + 7日前(1) = 7件
-      // 7日間なので、7件 / 7日 = 1.0件/日
-      expect(screen.getByText('1日平均').nextElementSibling).toHaveTextContent('1.0');
+      // おしっこ: (今日2 + 昨日1 + 3日前1) = 4件 / 7日 = 0.57... -> 0.6
+      // うんち: (今日1 + 昨日1 + 7日前1) = 3件 / 7日 = 0.42... -> 0.4
+      // 注意: ラベルが '1日平均' から '1日平均 (過去7日間)' に変更されていることを確認
+      const averageLabelElement = screen.getByText('1日平均 (過去7日間)');
+      expect(averageLabelElement).toBeInTheDocument();
+      expect(averageLabelElement.nextElementSibling).toHaveTextContent('おしっこ: 0.6回, うんち: 0.4回');
     });
 
     it('最多記録日が正しく特定されて表示される', () => {
