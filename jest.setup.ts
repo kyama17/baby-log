@@ -4,8 +4,8 @@ import '@testing-library/jest-dom';
 // Polyfill for Web APIs in Node.js test environment
 import { TextEncoder, TextDecoder } from 'util';
 
-global.TextEncoder = TextEncoder;
-global.TextDecoder = TextDecoder;
+global.TextEncoder = TextEncoder as any;
+global.TextDecoder = TextDecoder as any;
 
 // Mock Request and Response for API route tests
 global.Request = class Request {
@@ -52,3 +52,46 @@ global.ResizeObserver = jest.fn().mockImplementation(() => ({
   disconnect: jest.fn(),
 }));
 
+// Mock next/headers for cookieStore
+export const mockCookieStore = {
+  getAll: jest.fn().mockImplementation(() => []),
+  set: jest.fn(),
+};
+
+jest.mock('next/headers', () => ({
+  cookies: jest.fn(() => mockCookieStore),
+}));
+
+// Mock authenticated user session
+import { createClient } from './src/utils/supabase/server';
+jest.mock('./src/utils/supabase/server', () => ({
+  createClient: jest.fn().mockImplementation(() => ({
+    auth: {
+      getUser: jest.fn().mockResolvedValue({
+        data: {
+          user: {
+            id: 'test-user-id',
+            email: 'test@example.com'
+          }
+        },
+        error: null
+      })
+    },
+    from: jest.fn().mockReturnThis(),
+    select: jest.fn().mockReturnThis(),
+    eq: jest.fn().mockReturnThis(),
+    order: jest.fn().mockReturnThis(),
+    insert: jest.fn().mockReturnValue({
+      select: jest.fn().mockResolvedValue({ 
+        data: { id: 1, timestamp: "2025-06-01T06:08:04.501Z", type: "urination", user_id: "test-user-id" },
+        error: null
+      })
+    }),
+    delete: jest.fn().mockReturnThis(),
+    match: jest.fn().mockReturnThis(),
+    single: jest.fn().mockResolvedValue({ 
+      data: { id: 1, timestamp: "2025-06-01T06:08:04.501Z", type: "urination", user_id: "test-user-id" },
+      error: null
+    })
+  }))
+}));
