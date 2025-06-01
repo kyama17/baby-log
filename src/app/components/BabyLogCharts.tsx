@@ -111,6 +111,28 @@ export default function BabyLogCharts({ logEntries }: BabyLogChartsProps) {
     return { urination: urinationCount, defecation: defecationCount };
   }, [logEntries]);
 
+  // 過去7日間の平均おしっことうんちの回数
+  const averageData = useMemo(() => {
+    if (dailyData.length === 0) {
+      return { urination: 0, defecation: 0 };
+    }
+
+    const totalUrination = dailyData.reduce((sum, day) => sum + day.おしっこ, 0);
+    const totalDefecation = dailyData.reduce((sum, day) => sum + day.うんち, 0);
+
+    // Consider only days with actual records for averaging, or stick to 7 days?
+    // For now, let's stick to 7 days as per requirement, even if some days have 0.
+    // If there are no entries in the last 7 days, dailyData might be an array of 7 objects with 0 counts.
+    // Or, if logEntries is empty, dailyData itself will be based on 0 entries.
+
+    const numberOfDays = dailyData.length > 0 ? dailyData.length : 1; // Avoid division by zero if dailyData is unexpectedly empty
+
+    return {
+      urination: totalUrination / numberOfDays,
+      defecation: totalDefecation / numberOfDays,
+    };
+  }, [dailyData]);
+
   if (logEntries.length === 0) {
     return (
       <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
@@ -240,16 +262,15 @@ export default function BabyLogCharts({ logEntries }: BabyLogChartsProps) {
           <div className="text-2xl font-bold">{logEntries.length}</div>
         </div>
         <div className="bg-white dark:bg-gray-700 p-4 rounded-lg border">
-          <div className="text-sm text-gray-600 dark:text-gray-300">1日平均</div>
-          <div className="text-2xl font-bold">
-            {/* 過去7日間の実データで平均を計算 */}
-            {dailyData.length > 0 ? (dailyData.reduce((sum, day) => sum + day.total, 0) / 7).toFixed(1) : 0}
+          <div className="text-sm text-gray-600 dark:text-gray-300">1日平均 (過去7日間)</div>
+          <div className="text-lg font-bold">
+            おしっこ: {averageData.urination.toFixed(1)}回, うんち: {averageData.defecation.toFixed(1)}回
           </div>
         </div>
         <div className="bg-white dark:bg-gray-700 p-4 rounded-lg border">
           <div className="text-sm text-gray-600 dark:text-gray-300">最多記録日</div>
           <div className="text-lg font-bold">
-            {dailyData.reduce((max, day) => (day.total > max.total ? day : max), dailyData[0])?.date || '-'}
+            {dailyData.length > 0 ? dailyData.reduce((max, day) => (day.total > max.total ? day : max), dailyData[0])?.date : '-'}
           </div>
         </div>
       </div>
