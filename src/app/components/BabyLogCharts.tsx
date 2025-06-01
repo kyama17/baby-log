@@ -66,6 +66,19 @@ export default function BabyLogCharts({ logEntries }: BabyLogChartsProps) {
     });
   }, [logEntries]);
 
+  const { urinationAverageLast7Days, defecationAverageLast7Days } = useMemo(() => {
+    if (dailyData.length === 0) {
+      return { urinationAverageLast7Days: 0, defecationAverageLast7Days: 0 };
+    }
+    const totalUrination = dailyData.reduce((sum, day) => sum + day.おしっこ, 0);
+    const totalDefecation = dailyData.reduce((sum, day) => sum + day.うんち, 0);
+    // dailyData is guaranteed to be for 7 days by its construction
+    return {
+      urinationAverageLast7Days: totalUrination / 7,
+      defecationAverageLast7Days: totalDefecation / 7,
+    };
+  }, [dailyData]);
+
   // 時間別データの集計
   const hourlyData = useMemo(() => {
     const hourCounts = Array.from({ length: 24 }, (_, hour) => ({
@@ -240,16 +253,28 @@ export default function BabyLogCharts({ logEntries }: BabyLogChartsProps) {
           <div className="text-2xl font-bold">{logEntries.length}</div>
         </div>
         <div className="bg-white dark:bg-gray-700 p-4 rounded-lg border">
-          <div className="text-sm text-gray-600 dark:text-gray-300">1日平均</div>
+          <div className="text-sm text-gray-600 dark:text-gray-300">1日平均 (合計)</div>
           <div className="text-2xl font-bold">
             {/* 過去7日間の実データで平均を計算 */}
-            {dailyData.length > 0 ? (dailyData.reduce((sum, day) => sum + day.total, 0) / 7).toFixed(1) : 0}
+            {(dailyData.reduce((sum, day) => sum + day.total, 0) / 7).toFixed(1)}
+          </div>
+        </div>
+        <div className="bg-white dark:bg-gray-700 p-4 rounded-lg border">
+          <div className="text-sm text-gray-600 dark:text-gray-300">1日平均 (おしっこ)</div>
+          <div className="text-2xl font-bold">
+            {urinationAverageLast7Days.toFixed(1)}
+          </div>
+        </div>
+        <div className="bg-white dark:bg-gray-700 p-4 rounded-lg border">
+          <div className="text-sm text-gray-600 dark:text-gray-300">1日平均 (うんち)</div>
+          <div className="text-2xl font-bold">
+            {defecationAverageLast7Days.toFixed(1)}
           </div>
         </div>
         <div className="bg-white dark:bg-gray-700 p-4 rounded-lg border">
           <div className="text-sm text-gray-600 dark:text-gray-300">最多記録日</div>
           <div className="text-lg font-bold">
-            {dailyData.reduce((max, day) => (day.total > max.total ? day : max), dailyData[0])?.date || '-'}
+            {dailyData.length > 0 ? dailyData.reduce((max, day) => (day.total > max.total ? day : max), dailyData[0])?.date : '-'}
           </div>
         </div>
       </div>
