@@ -10,10 +10,17 @@ export async function createClient() {
     {
       cookies: {
         getAll() {
+          // テスト環境では空の配列を返す
+          if (process.env.NODE_ENV === 'test') {
+            return []
+          }
           return cookieStore.getAll()
         },
         setAll(cookiesToSet) {
           try {
+            // テスト環境では何もしない
+            if (process.env.NODE_ENV === 'test') return
+            
             cookiesToSet.forEach(({ name, value, options }) =>
               cookieStore.set(name, value, options)
             )
