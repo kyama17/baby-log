@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
-import { createClient } from '../utils/supabase/server'
-import BabyLogContent from './components/BabyLogContent'
+import { createClient } from '../../utils/supabase/server' // Updated path
+import BabyLogContent from '../components/BabyLogContent' // Updated path
 
 export default async function BabyLogPage() {
   const supabase = await createClient()
