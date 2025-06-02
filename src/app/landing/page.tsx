@@ -3,16 +3,15 @@ import Link from 'next/link';
 export default function LandingPage() {
   return (
     <div>
-      <h1>Welcome to Our Application!</h1>
+      <h1>ようこそ！</h1>
       <p>
-        Join us and explore the amazing features we offer. Sign up for a new
-        account or log in if you already have one.
+        素晴らしい機能の数々をぜひ体験してください。アカウントをお持ちでない方は新規登録、既にお持ちの方はログインしてください。
       </p>
       <div>
         <Link href="/login">
-          <button>Login</button>
+          <button>ログイン</button>
         </Link>
-        {/* Add a signup button/link here if/when signup functionality exists */}
+        {/* サインアップ機能が実装されたら、ここにサインアップボタン/リンクを追加します */}
       </div>
     </div>
   );
