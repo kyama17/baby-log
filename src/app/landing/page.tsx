@@ -1,27 +1,34 @@
+'use client'; // Landing page needs to be a client component for useTranslations
+
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 
 export default function LandingPage() {
+  const t = useTranslations('LandingPage');
+
   return (
     <div>
-      <h1>ようこそ！</h1>
-      <p>
-        素晴らしい機能の数々をぜひ体験してください。アカウントをお持ちでない方は新規登録、既にお持ちの方はログインしてください。
-      </p>
+      <h1>{t('welcomeTitle')}</h1>
+      <p>{t('welcomeMessage')}</p>
       {/* Features Section */}
       <section style={{ marginBottom: '20px', marginTop: '20px' }}>
-        <h2 style={{ fontSize: '1.5em', marginBottom: '10px' }}>特徴</h2>
+        <h2 style={{ fontSize: '1.5em', marginBottom: '10px' }}>{t('featuresTitle')}</h2>
         <ul style={{ listStylePosition: 'inside' }}>
-          <li style={{ marginBottom: '5px' }}>赤ちゃんのおしっことうんちを記録</li>
-          <li style={{ marginBottom: '5px' }}>記録されたログを表示</li>
-          <li style={{ marginBottom: '5px' }}>日本語対応のユーザーインターフェース</li>
-          <li style={{ marginBottom: '5px' }}><strong>ユーザー認証</strong>: Supabaseを利用したメールアドレスとパスワードによるサインアップ・サインイン機能。ユーザーはアカウントを作成して、自分の赤ちゃんの活動記録を管理できます。</li>
+          <li style={{ marginBottom: '5px' }}>{t('feature1')}</li>
+          <li style={{ marginBottom: '5px' }}>{t('feature2')}</li>
+          <li style={{ marginBottom: '5px' }}>{t('feature3')}</li>
+          <li style={{ marginBottom: '5px' }}>
+            {t.rich('feature4', {
+              strong: (chunks) => <strong>{chunks}</strong>,
+            })}
+          </li>
         </ul>
       </section>
       <div>
         <Link href="/login">
-          <button>ログイン</button>
+          <button>{t('loginButton')}</button>
         </Link>
-        {/* サインアップ機能が実装されたら、ここにサインアップボタン/リンクを追加します */}
+        {/* Add signup button/link here once signup functionality is implemented */}
       </div>
     </div>
   );

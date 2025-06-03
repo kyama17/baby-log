@@ -1,0 +1,43 @@
+{
+  "AuthButton": {
+    "login": "Login",
+    "logout": "Logout",
+    "loading": "..."
+  },
+  "Layout": {
+    "title": "Baby Log App",
+    "description": "Track your baby's potty activities",
+    "appName": "Baby Log App",
+    "babyLogLink": "Baby Log"
+  },
+  "LandingPage": {
+    "welcomeTitle": "Welcome!",
+    "welcomeMessage": "Experience a host of amazing features. If you don't have an account, please sign up. If you already have an account, please log in.",
+    "featuresTitle": "Features",
+    "feature1": "Record baby's urination and defecation",
+    "feature2": "Display recorded logs",
+    "feature3": "User interface available in multiple languages",
+    "feature4": "<strong>User Authentication</strong>: Sign-up and sign-in functionality using email and password via Supabase. Users can create an account to manage their baby's activity records.",
+    "loginButton": "Login"
+  },
+  "BabyLogContent": {
+    "pageTitle": "🍼 Baby's Potty Log",
+    "demoDataLink": "🧪 Demo Data",
+    "newRecordTitle": "📝 New Record",
+    "typeLabel": "Type",
+    "urinationOption": "💧 Urination",
+    "defecationOption": "💩 Defecation",
+    "datetimeLabel": "Date and Time",
+    "recordButton": "Record",
+    "chartsTitle": "📊 Charts",
+    "recentRecordsTitle": "📋 Recent Records",
+    "noRecordsMessage": "No records yet. Please add a record using the form above.",
+    "deleteButton": "Delete",
+    "loadingMessage": "Loading...",
+    "paginationMessage": "Showing the latest 20 records (out of {count} total)",
+    "alertErrorSaving": "Failed to save data.",
+    "alertErrorDeleting": "Failed to delete data: {error}",
+    "alertErrorDeletingUnexpected": "An unexpected error occurred while deleting data.",
+    "alertAuthError": "Authentication error. Please login again."
+  }
+}

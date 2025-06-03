@@ -1,0 +1,43 @@
+{
+  "AuthButton": {
+    "login": "ログイン",
+    "logout": "ログアウト",
+    "loading": "読み込み中..."
+  },
+  "Layout": {
+    "title": "ベビーログアプリ",
+    "description": "赤ちゃんのトイレ活動を追跡",
+    "appName": "ベビーログアプリ",
+    "babyLogLink": "ベビーログ"
+  },
+  "LandingPage": {
+    "welcomeTitle": "ようこそ！",
+    "welcomeMessage": "素晴らしい機能の数々をぜひ体験してください。アカウントをお持ちでない方は新規登録、既にお持ちの方はログインしてください。",
+    "featuresTitle": "特徴",
+    "feature1": "赤ちゃんのおしっことうんちを記録",
+    "feature2": "記録されたログを表示",
+    "feature3": "日本語対応のユーザーインターフェース",
+    "feature4": "<strong>ユーザー認証</strong>: Supabaseを利用したメールアドレスとパスワードによるサインアップ・サインイン機能。ユーザーはアカウントを作成して、自分の赤ちゃんの活動記録を管理できます。",
+    "loginButton": "ログイン"
+  },
+  "BabyLogContent": {
+    "pageTitle": "🍼 赤ちゃんのトイレログ",
+    "demoDataLink": "🧪 デモデータ",
+    "newRecordTitle": "📝 新しい記録",
+    "typeLabel": "種類",
+    "urinationOption": "💧 おしっこ",
+    "defecationOption": "💩 うんち",
+    "datetimeLabel": "日時",
+    "recordButton": "記録",
+    "chartsTitle": "📊 グラフ",
+    "recentRecordsTitle": "📋 最近の記録",
+    "noRecordsMessage": "まだ記録がありません。上のフォームから記録を追加してください。",
+    "deleteButton": "削除",
+    "loadingMessage": "読み込み中...",
+    "paginationMessage": "最新の20件を表示しています（全{count}件）",
+    "alertErrorSaving": "データの保存に失敗しました。",
+    "alertErrorDeleting": "データの削除に失敗しました: {error}",
+    "alertErrorDeletingUnexpected": "データの削除中に予期せぬエラーが発生しました。",
+    "alertAuthError": "認証エラー。再度ログインしてください。"
+  }
+}
