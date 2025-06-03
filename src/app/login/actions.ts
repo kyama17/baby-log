@@ -23,8 +23,6 @@ export async function login(formData: FormData) {
 
   revalidatePath('/dashboard', 'layout') // Update revalidatePath for login
   redirect('/dashboard')
-  revalidatePath('/dashboard', 'layout') // Update revalidatePath for signup
-  redirect('/dashboard')
 }
 
 export async function signup(formData: FormData) {

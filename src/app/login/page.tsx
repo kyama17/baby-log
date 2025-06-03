@@ -1,6 +1,20 @@
+"use client"
+
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuthContext } from '@/contexts/AuthContext';
 import { login, signup } from './actions'
 
 export default function LoginPage() {
+  const { user, loading } = useAuthContext();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && user) {
+      router.push('/dashboard');
+    }
+  }, [user, loading, router]);
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
       <form className="p-8 bg-white rounded-lg shadow-md w-full max-w-sm">
