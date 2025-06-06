@@ -55,7 +55,7 @@ export default function DemoPage() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">赤ちゃんのトイレログ（デモ版）</h1>
+      <h1 className="text-2xl font-bold mb-4">子どものトイレログ（デモ版）</h1>
       <div className="mb-4 p-4 bg-blue-100 rounded dark:bg-blue-800">
         <p className="text-sm text-blue-800 dark:text-blue-300">
           このデモ版では、データはブラウザのローカルストレージに保存されます。

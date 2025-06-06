@@ -124,7 +124,7 @@ export default function BabyLogContent({ user }: { user: User }) {
   return (
     <div className="container mx-auto p-4 max-w-6xl">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">🍼 赤ちゃんのトイレログ</h1>
+        <h1 className="text-3xl font-bold">🍼 子どものトイレログ</h1>
         {/* The AuthButton could be placed here or in the main layout */}
         {/* For example: <AuthButton /> */}
         <a
