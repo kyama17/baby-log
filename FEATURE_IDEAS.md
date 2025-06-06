@@ -38,18 +38,18 @@ This file contains a list of potential features for the pymath library.
 Here are some potential new features for the Baby Log App:
 
 1.  **Track Feeding Times:**
-    *   Allow users to log feeding times (breast milk, formula, solids).
-    *   Include details like duration (for breastfeeding) or amount (for formula/solids).
-    *   Display feeding logs alongside diaper changes.
-    *   Consider adding notifications/reminders for feeding times.
+    - Allow users to log feeding times (breast milk, formula, solids).
+    - Include details like duration (for breastfeeding) or amount (for formula/solids).
+    - Display feeding logs alongside diaper changes.
+    - Consider adding notifications/reminders for feeding times.
 
 2.  **Sleep Tracking:**
-    *   Enable users to record when the baby sleeps and wakes up.
-    *   Calculate total sleep duration for the day/night.
-    *   Visualize sleep patterns (e.g., a timeline or a bar chart showing sleep cycles).
-    *   Allow editing of sleep entries.
+    - Enable users to record when the baby sleeps and wakes up.
+    - Calculate total sleep duration for the day/night.
+    - Visualize sleep patterns (e.g., a timeline or a bar chart showing sleep cycles).
+    - Allow editing of sleep entries.
 
 3.  **Growth Milestones & Health Log:**
-    *   Provide a section to log important developmental milestones (e.g., first smile, rolling over, first steps, first words) with dates and notes.
-    *   Allow users to track weight, height, and head circumference over time, possibly with a growth chart visualization.
-    *   Include a section for health-related notes, such as vaccination records or symptoms during illness.
+    - Provide a section to log important developmental milestones (e.g., first smile, rolling over, first steps, first words) with dates and notes.
+    - Allow users to track weight, height, and head circumference over time, possibly with a growth chart visualization.
+    - Include a section for health-related notes, such as vaccination records or symptoms during illness.
