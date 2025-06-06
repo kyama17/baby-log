@@ -11,10 +11,10 @@ export default function LandingPage() {
       <section style={{ marginBottom: '20px', marginTop: '20px' }}>
         <h2 style={{ fontSize: '1.5em', marginBottom: '10px' }}>特徴</h2>
         <ul style={{ listStylePosition: 'inside' }}>
-          <li style={{ marginBottom: '5px' }}>赤ちゃんのおしっことうんちを記録</li>
+          <li style={{ marginBottom: '5px' }}>子どものおしっことうんちを記録</li>
           <li style={{ marginBottom: '5px' }}>記録されたログを表示</li>
           <li style={{ marginBottom: '5px' }}>日本語対応のユーザーインターフェース</li>
-          <li style={{ marginBottom: '5px' }}><strong>ユーザー認証</strong>: Supabaseを利用したメールアドレスとパスワードによるサインアップ・サインイン機能。ユーザーはアカウントを作成して、自分の赤ちゃんの活動記録を管理できます。</li>
+          <li style={{ marginBottom: '5px' }}><strong>ユーザー認証</strong>: Supabaseを利用したメールアドレスとパスワードによるサインアップ・サインイン機能。ユーザーはアカウントを作成して、自分の子どもの活動記録を管理できます。</li>
         </ul>
       </section>
       <div>
