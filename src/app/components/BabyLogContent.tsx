@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import confetti from 'canvas-confetti';
 import { useRouter } from 'next/navigation';
 import { User } from '@supabase/supabase-js';
 import BabyLogCharts from './BabyLogCharts';
@@ -76,6 +77,12 @@ export default function BabyLogContent({ user }: { user: User }) {
         const now = new Date();
         now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
         setDatetime(now.toISOString().slice(0, 16));
+
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 }
+        });
       } else {
         throw new Error('Invalid response data from server');
       }
