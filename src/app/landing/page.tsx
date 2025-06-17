@@ -2,27 +2,54 @@ import Link from 'next/link';
 
 export default function LandingPage() {
   return (
-    <div>
-      <h1>ようこそ！</h1>
-      <p>
-        素晴らしい機能の数々をぜひ体験してください。アカウントをお持ちでない方は新規登録、既にお持ちの方はログインしてください。
-      </p>
-      {/* Features Section */}
-      <section style={{ marginBottom: '20px', marginTop: '20px' }}>
-        <h2 style={{ fontSize: '1.5em', marginBottom: '10px' }}>特徴</h2>
-        <ul style={{ listStylePosition: 'inside' }}>
-          <li style={{ marginBottom: '5px' }}>子どものおしっことうんちを記録</li>
-          <li style={{ marginBottom: '5px' }}>記録されたログを表示</li>
-          <li style={{ marginBottom: '5px' }}>日本語対応のユーザーインターフェース</li>
-          <li style={{ marginBottom: '5px' }}><strong>ユーザー認証</strong>: Supabaseを利用したメールアドレスとパスワードによるサインアップ・サインイン機能。ユーザーはアカウントを作成して、自分の子どもの活動記録を管理できます。</li>
-        </ul>
+    <div style={{ fontFamily: 'Arial, sans-serif', padding: '40px', textAlign: 'center', backgroundColor: '#f0f8ff' }}>
+      <header style={{ marginBottom: '40px' }}>
+        <h1 style={{ fontSize: '2.5em', color: '#333' }}>Welcome to Baby Logger!</h1>
+        <p style={{ fontSize: '1.2em', color: '#555' }}>
+          Easily track your baby's feeding, sleeping, and diaper changes. Get valuable insights and make parenting a little simpler.
+        </p>
+      </header>
+
+      <section style={{ marginBottom: '40px' }}>
+        <h2 style={{ fontSize: '2em', color: '#333', marginBottom: '20px' }}>Key Features & Benefits</h2>
+        <div style={{ display: 'flex', justifyContent: 'space-around', flexWrap: 'wrap' }}>
+          <div style={{ backgroundColor: '#fff', padding: '20px', margin: '10px', borderRadius: '8px', boxShadow: '0 4px 8px rgba(0,0,0,0.1)', width: '300px' }}>
+            <h3 style={{ fontSize: '1.5em', color: '#007bff' }}>Comprehensive Tracking</h3>
+            <p style={{ color: '#666' }}>Log diaper changes (pee and poop), feeding times, and sleep patterns with just a few clicks.</p>
+          </div>
+          <div style={{ backgroundColor: '#fff', padding: '20px', margin: '10px', borderRadius: '8px', boxShadow: '0 4px 8px rgba(0,0,0,0.1)', width: '300px' }}>
+            <h3 style={{ fontSize: '1.5em', color: '#28a745' }}>Insightful Overviews</h3>
+            <p style={{ color: '#666' }}>View historical logs and charts to understand your baby's routines and spot trends.</p>
+          </div>
+          <div style={{ backgroundColor: '#fff', padding: '20px', margin: '10px', borderRadius: '8px', boxShadow: '0 4px 8px rgba(0,0,0,0.1)', width: '300px' }}>
+            <h3 style={{ fontSize: '1.5em', color: '#ffc107' }}>Secure & Private</h3>
+            <p style={{ color: '#666' }}>Your data is safe with our secure user authentication (powered by Supabase), ensuring only you can access your baby's information.</p>
+          </div>
+        </div>
       </section>
-      <div>
-        <Link href="/login">
-          <button>ログイン</button>
-        </Link>
-        {/* サインアップ機能が実装されたら、ここにサインアップボタン/リンクを追加します */}
-      </div>
+
+      <section style={{ marginBottom: '40px' }}>
+        <h2 style={{ fontSize: '1.8em', color: '#333', marginBottom: '15px' }}>Get Started Today!</h2>
+        <p style={{ fontSize: '1.1em', color: '#555', marginBottom: '25px' }}>
+          Create an account to start logging and managing your baby's activities, or log in if you already have an account.
+        </p>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '20px' }}>
+          <Link href="/login">
+            <button style={{ padding: '10px 20px', fontSize: '1.1em', color: 'white', backgroundColor: '#007bff', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
+              Log In
+            </button>
+          </Link>
+          <Link href="/login">
+            <button style={{ padding: '10px 20px', fontSize: '1.1em', color: 'white', backgroundColor: '#28a745', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
+              Sign Up
+            </button>
+          </Link>
+        </div>
+      </section>
+
+      <footer style={{ marginTop: '50px', paddingTop: '20px', borderTop: '1px solid #ddd' }}>
+        <p style={{ color: '#777' }}>Baby Logger - Making your parenting journey smoother.</p>
+      </footer>
     </div>
   );
 }
