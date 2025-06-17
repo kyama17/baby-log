@@ -11,7 +11,7 @@ export async function createClient() {
       cookies: {
         get(name: string) {
           if (process.env.NODE_ENV === 'test') {
-            return undefined
+            return null
           }
           return cookieStore.get(name)?.value
         },
