@@ -9,23 +9,32 @@ export async function createClient() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll() {
-          // テスト環境では空の配列を返す
+        get(name: string) {
           if (process.env.NODE_ENV === 'test') {
-            return []
+            return null
           }
-          return cookieStore.getAll()
+          return cookieStore.get(name)?.value
         },
-        setAll(cookiesToSet) {
+        set(name: string, value: string, options: any) {
+          if (process.env.NODE_ENV === 'test') {
+            return
+          }
           try {
-            // テスト環境では何もしない
-            if (process.env.NODE_ENV === 'test') return
-            
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            )
-          } catch {
-            // The `setAll` method was called from a Server Component.
+            cookieStore.set(name, value, options)
+          } catch (error) {
+            // The `set` method was called from a Server Component.
+            // This can be ignored if you have middleware refreshing
+            // user sessions.
+          }
+        },
+        remove(name: string, options: any) {
+          if (process.env.NODE_ENV === 'test') {
+            return
+          }
+          try {
+            cookieStore.set(name, '', options)
+          } catch (error) {
+            // The `delete` method was called from a Server Component.
             // This can be ignored if you have middleware refreshing
             // user sessions.
           }
