@@ -76,6 +76,7 @@ export default function BabyLogContent({ user }: { user: User }) {
         const now = new Date();
         now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
         setDatetime(now.toISOString().slice(0, 16));
+        alert('記録を追加しました');
       } else {
         throw new Error('Invalid response data from server');
       }
