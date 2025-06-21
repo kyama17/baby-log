@@ -87,6 +87,9 @@ export default function BabyLogContent({ user }: { user: User }) {
   };
 
   const handleDelete = async (id: number) => {
+    if (!window.confirm('本当に削除しますか？')) {
+      return;
+    }
     try {
       const response = await fetch('/api/baby-log', {
         method: 'DELETE',
