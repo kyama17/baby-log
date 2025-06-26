@@ -131,12 +131,6 @@ export default function BabyLogContent({ user }: { user: User }) {
         <h1 className="text-3xl font-bold">🍼 子どものトイレログ</h1>
         {/* The AuthButton could be placed here or in the main layout */}
         {/* For example: <AuthButton /> */}
-        <a
-          href="/demo-data"
-          className="text-sm bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded transition-colors duration-200 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-300"
-        >
-          🧪 デモデータ
-        </a>
       </div>
       
       {/* 記録フォーム */}
